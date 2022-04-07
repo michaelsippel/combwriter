@@ -7,17 +7,31 @@ angle_map_y = [ -10, 4, 15 ];
 
 scale_map_x = [ 0.12, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ];
 
-xoff = 0.79;
-yoff = 0.81;
-
 thumb_angle_map = [ 5, 5, 3, 0, -15 ];
 
-module key(
-    angleX = 0,
-    angleY = 0,
-    height = 1.0,
-    stretchX = 0
-) {
+module print_cap(angleX = 0, angleY = 0, height = 1.0, stretchX = 0) {
+  rotate([0,180,0])
+    translate([0,0,0.25])
+    difference() {
+    scale([1.0, 0.9, 1])
+      rotate([-angleX, -angleY, 0])
+      translate([0,0, -height])
+      union() {
+      cylinder(h=height, d1=1, d2=0.8, $fn=6);
+
+      translate([-stretchX, 0, 0])
+	cylinder(h=height, d1=1, d2=0.8, $fn=6);
+
+      translate([stretchX, 0, 0])
+	cylinder(h=height, d1=1, d2=0.8, $fn=6);
+    }
+
+    scale([1.5, 1.5, 0.5])
+      cube(1.0, true);
+  };
+};
+
+module proto_cap(angleX = 0, angleY = 0, height = 1.0, stretchX = 0) {
     difference() {
       scale([1.0, 0.9, 1])
       union() {
@@ -31,13 +45,20 @@ module key(
       }
 
       translate([0,0, height])
-	rotate([angleX, angleY, 0])
+      rotate([angleX, angleY, 0])
 	scale([1.5, 1.5, 0.5])
 	cube(1.0, true);
     };
 };
 
-module main_cluster() {
+module key(angleX, angleY, height, stretchX, proto) {
+  if( proto )
+    proto_cap(angleX, angleY, height, stretchX);
+  else
+    print_cap(angleX, angleY, height, stretchX);
+};
+
+module main_cluster( proto=false, xoff=1.0, yoff=1.2 ) {
   for(x = [-3:3])
     for(y = [-1:1]) {
       if(x < 3 || y >= 0) {
@@ -45,13 +66,14 @@ module main_cluster() {
 	if( x== 0 && y == 1) {
 	  // special treatment for top key in center column
 	  translate([0, 3*yoff, 0])
-	    key( 20, 0, 0.8 );
+	    key( 20, 0, 0.8, 0.0, proto );
         } else {
 	    translate([xoff * x - scale_map_x[x+3], yoff*(2+y - 0.5*abs(x)), 0])
 	      key(angle_map_y[y+1],
 		  angle_map_x[x+3],
 		  0.4 + height_map_x[x + 3] + height_map_y[y + 1],
-		  scale_map_x[x+3]);
+		  scale_map_x[x+3],
+		  proto);
 	}
       }
     }
@@ -71,21 +93,23 @@ module thumb_joystick() {
   }
 }
 
-module thumb_cluster() {
+module thumb_cluster( proto=false, xoff=1.0, yoff=1.2 ) {  
   for(x = [0:4])
     translate([xoff*x, -yoff*(x - 0.5*abs(x)), 0])
-      if(x == 3)
-	thumb_joystick();
+      if(x == 3) {
+	if( proto )
+	  thumb_joystick();
+      }
       else
-	key(15, thumb_angle_map[x], 0.6+0.5*height_map_x[x]);
+	key(15, thumb_angle_map[x], 0.6+0.5*height_map_x[x], 0.0, proto);
 
   translate([3*xoff, -0.5*yoff, 0])
   for(x = [0:1])
     translate([xoff*x, -yoff*(x - 0.5*abs(x)), 0])
-      key(15, -x*15, 0.8 + x*0.05);
+      key(15, -x*15, 0.8 + x*0.05, 0.0, proto);
 }
 
-module plate(height=0.1) {
+module plate(xoff, yoff, height=0.1) {
   for(x = [-3:4])
     for(y = [-2:1]) {
       if( (x >= 0 || y > -2) && (x<4 || y<0) ) {
@@ -101,13 +125,28 @@ module plate(height=0.1) {
     }
 }
 
-scale(2.33) {
-  main_cluster();
+module proto_board() {
+  xoff = 0.79;
+  yoff = 0.81;
+  
+  main_cluster(true, xoff, yoff);
 
   color([0.6, 0, 0])
-    thumb_cluster();
+    thumb_cluster(true, xoff, yoff);
 
   color([0,0.5,0])
-    plate();
+    plate(xoff, yoff);
 }
 
+module keycaps() {
+  main_cluster();
+  thumb_cluster();
+}
+
+
+scale(2.33) {
+  proto_board();
+  //keycaps();
+}
+
+ 
