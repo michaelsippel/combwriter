@@ -1,3 +1,4 @@
+include <keycap_base.scad>
 include <mx_switch.scad>
 
 height_map_x = [ 12.65 , 9.2 , 4.6, 2.3, 6.9, 10.36, 12.65 ];
@@ -10,56 +11,10 @@ scale_map_x = [ 0.12, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ];
 
 thumb_angle_map = [ 5, 5, 3, 0, -15 ];
 
-module base_cap(height, stretchX, d=23) {  
-  scale([1.0, 0.9, 1])
-  union() {
-    cylinder(h=height, d1=d, d2=0.8 * d, $fn=6);
+xoff = 17.9;
+yoff = 19.3;
 
-    translate([-stretchX, 0, 0])
-      cylinder(h=height, d1=d, d2=0.8 * d, $fn=6);
-
-    translate([stretchX, 0, 0])
-      cylinder(h=height, d1=d, d2=0.8 * d, $fn=6);
-  }
-}
-
-module print_cap(angleX = 0, angleY = 0, height = 1.0, stretchX = 0) {
-  rotate([0,180,0])
-  translate([0,0,5])
-  difference() {
-    rotate([-angleX, -angleY, 0])
-    translate([0,0, -height])
-    difference() {
-        base_cap(height, stretchX);
-
-	translate([0,0, -0.5])
-	mx_switch();
-    }
-
-    scale([1.5, 1.5, 0.5])
-    cube(20.0, true);
-  };
-};
-
-module proto_cap(angleX = 0, angleY = 0, height = 1.0, stretchX = 0) {
-  difference() {
-    base_cap(height, stretchX);
-
-    translate([0,0, height])
-    rotate([angleX, angleY, 0])
-    scale([1.5, 1.5, 0.5])
-    cube(20.0, true);
-  };
-};
-
-module key(angleX=0, angleY=0, height=20, stretchX=0, proto=false) {
-  if( proto )
-    proto_cap(angleX, angleY, height, stretchX);
-  else
-    print_cap(angleX, angleY, height, stretchX);
-};
-
-module main_cluster( proto=false, xoff=20, yoff=25 ) {
+module main_cluster( proto=false, xoff=20, yoff=28 ) {
   for(x = [-3:3])
     for(y = [-1:1]) {
       if(x < 3 || y >= 0) {
@@ -126,7 +81,7 @@ module switches(xoff, yoff) {
   }
 }
 
-module plate(xoff, yoff, height=2, proto=false) {
+module plate(xoff, yoff, height=2) {
   for(x = [-3:4]) {
     for(y = [-2:1]) {
       if( (x >= 0 || y > -2) && (x<4 || y<0) ) {
@@ -142,30 +97,4 @@ module plate(xoff, yoff, height=2, proto=false) {
     }
   }
 }
-
-module proto_board(xoff = 18.17, yoff = 18.63) {
-  main_cluster(true, xoff, yoff);
-
-  color([0.6, 0, 0])
-    thumb_cluster(true, xoff, yoff);
-
-  color([0,0.5,0])
-    plate(xoff, yoff);
-}
-
-module print_plate(xoff = 18.17, yoff = 18.63) {
-  difference() {
-    plate(xoff, yoff, 7, true);
-    switches(xoff, yoff);
-  }
-}
-
-module print_keycaps() {
-  main_cluster();
-  thumb_cluster();
-}
-
-proto_board();
-//print_plate();
-//print_keycaps();
 
