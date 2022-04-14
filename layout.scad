@@ -1,8 +1,8 @@
 include <keycap_base.scad>
 include <mx_switch.scad>
 
-height_map_x = [ 12.65 , 9.2 , 4.6, 2.3, 6.9, 10.36, 12.65 ];
-height_map_y = [ 1.15, 0.0, 3.45 ];
+height_map_x = [ 12.65 , 9.2 , 4.1, 2.3, 6.9, 10.36, 12.65 ];
+height_map_y = [ 1.15, 0.0, 3.6 ];
 
 angle_map_x = [ 10, 10, 8, 0, -15, -10, -10 ];
 angle_map_y = [ -10, 4, 15 ];
@@ -14,7 +14,14 @@ thumb_angle_map = [ 5, 5, 3, 0, -15 ];
 xoff = 17.9;
 yoff = 19.3;
 
-module main_cluster( proto=false, xoff=20, yoff=28 ) {
+text = [
+	["", "X…", "V_", "L\[", "C]", "W^", ""],
+	["", "U\\", "I/", "A{", "E}", "O*", ""],
+	["", "Ü#", "Ö$", "Ä|", "P~", "Z~", ""],
+	["", "", "", "", "", ""],
+];
+
+module main_cluster( proto=false, xoff=20, yoff=30 ) {
   for(x = [-3:3])
     for(y = [-1:1]) {
       if(x < 3 || y >= 0) {
@@ -22,14 +29,14 @@ module main_cluster( proto=false, xoff=20, yoff=28 ) {
 	if( x== 0 && y == 1) {
 	  // special treatment for top key in center column
 	  translate([0, 3*yoff, 0])
-	    key( 20, 0, 18.4, 0.0, proto );
+	    key( 20, 0, 18.4, 0.0, proto, text[1-y][x+3] );
         } else {
-	    translate([xoff * x - scale_map_x[x+3], yoff*(2+y - 0.5*abs(x)), 0])
+          translate([xoff * x - scale_map_x[x+3], yoff*(2+y - 0.5*abs(x)), 0])
 	      key(angle_map_y[y+1],
 		  angle_map_x[x+3],
 		  9.2 + height_map_x[x + 3] + height_map_y[y + 1],
 		  scale_map_x[x+3],
-		  proto);
+		  proto, text[1-y][x+3]);
 	}
       }
     }
@@ -57,12 +64,12 @@ module thumb_cluster( proto=false, xoff=20, yoff=25 ) {
 	  thumb_joystick();
       }
       else
-	key(15, thumb_angle_map[x], 13.8 + 0.5*height_map_x[x], 0.0, proto);
+	key(15, thumb_angle_map[x], 13.8 + 0.5*height_map_x[x], 0.0, proto, text[3][x]);
 
   translate([3*xoff, -0.5*yoff, 0])
   for(x = [0:1])
     translate([xoff*x, -yoff*(x - 0.5*abs(x)), 0])
-      key(15, -x*15, 18.4 + x*0.05, 0.0, proto);
+      key(15, -x*15, 18.4 + x*0.05, 0.0, proto, text[3][x+3]);
 }
 
 module switches(xoff, yoff) {
