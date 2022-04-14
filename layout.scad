@@ -7,7 +7,7 @@ height_map_y = [ 1.15, 0.0, 3.45 ];
 angle_map_x = [ 10, 10, 8, 0, -15, -10, -10 ];
 angle_map_y = [ -10, 4, 15 ];
 
-scale_map_x = [ 0.12, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ];
+scale_map_x = [ 2.3, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ];
 
 thumb_angle_map = [ 5, 5, 3, 0, -15 ];
 
@@ -71,7 +71,7 @@ module switches(xoff, yoff) {
       if( (x >= 0 || y > -2) && (x<4 || y<0) ) {
 
 	if( ! (x == 3 && y == -2) ) {
-	  translate([xoff*x, yoff*(2+y - 0.5*abs(x)), 0])
+	  translate([xoff*x - sign(xoff)*scale_map_x[x+3], yoff*(2+y - 0.5*abs(x)), 0])
 	    color([1,0,0])
 	    translate([0,0,1])
 	    mx_switch();
@@ -90,7 +90,7 @@ module plate(xoff, yoff, height=2) {
 	    cylinder(h=height, d=30, $fn=6);
 
 	    if( x == -3 )
-	      translate([-2*scale_map_x[0], 0, 0])
+	      translate([-2*sign(xoff)*scale_map_x[0], 0, 0])
 		cylinder(h=height, d=30, $fn=6);
 	  }
       }
