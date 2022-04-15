@@ -88,17 +88,17 @@ module switches(xoff, yoff) {
   }
 }
 
-module plate(xoff, yoff, height=2) {
+module plate(xoff, yoff, height=2, d=30) {
   for(x = [-3:4]) {
     for(y = [-2:1]) {
       if( (x >= 0 || y > -2) && (x<4 || y<0) ) {
 	translate([xoff*x, yoff*(2+y - 0.5*abs(x)), -height])
 	  {
-	    cylinder(h=height, d=30, $fn=6);
+	    cylinder(h=height, d=d, $fn=6);
 
 	    if( x == -3 )
 	      translate([-2*sign(xoff)*scale_map_x[0], 0, 0])
-		cylinder(h=height, d=30, $fn=6);
+		cylinder(h=height, d=d, $fn=6);
 	  }
       }
     }
