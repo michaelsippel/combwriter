@@ -4,14 +4,15 @@ module mx_switch() {
 
     // cross
     translate([0,0,3])
-      cube([4.0, 1.2, 4.0], center=true);
+      cube([4.0, 1.2, 5.0], center=true);
 
     difference() {
       translate([0,0,3])
-	cube([1.0, 4.0, 4.0], center=true);
+	cube([1.0, 4.0, 5.0], center=true);
 
-      translate([0,2.0,4.25])
-	cube([2.0,0.8,0.6], center=true);
+      translate([0,2.0,4.75])
+	cube([2.0,0.5,0.6], center=true);
+
     }
 
     cube([7.0,6.0, 4.0], center=true);
@@ -19,10 +20,10 @@ module mx_switch() {
     // upper half
     difference() {
       hull() {
-	translate([0,0.5,5])
-	  cube([14.5, 9, 0.01], center=true);
+	translate([0,0.5,5.5])
+	  cube([13, 11, 0.01], center=true);
 
-	cube([14.5, 14, 0.01], center=true);
+	cube([13, 15, 0.01], center=true);
       }
 
       translate([0,0,3])
@@ -47,7 +48,7 @@ module mx_switch() {
     translate([0,0, -10])
       cylinder(h=5, d=4, $fn=32);
 
-    translate([3, -2.5, -10])
+    translate([3.5, -2.7, -10])
       cylinder(h=5, d=2, $fn=32);
 
     translate([-3.0, -5, -10])
