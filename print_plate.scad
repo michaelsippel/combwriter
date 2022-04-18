@@ -1,13 +1,29 @@
 include <layout.scad>
+include <diode.scad>
+
+
+module diodes() {
+  for(x = [-3:4]) {
+    for(y = [-2:1]) {
+      if( (x >= 0 || y > -2) && (x<4 || y<0) && (x!=3||y!=-2) ) {
+
+      translate([xoff*x - sign(xoff)*scale_map_x[x+3], yoff*(2+y - 0.5*abs(x)), 0])
+	translate([-4, 1.5,-5])
+	rotate([0,0,90])
+	diode();
+      }
+    }
+  }
+}
 
 module connector1(l=10, r=30) {
   translate([-3,-5,0])
   rotate([0,0,r])
-  union() {
-    circle(d=6.0, $fn=6);
-    translate([0,l/2,0])
-    square([4, l], center=true);
-  }
+  circle(d=6.0, $fn=6);
+
+  translate([-4,1.5,0])
+  rotate([0,0,90])
+  diode_pads();  
 }
 
 module connector2() {
@@ -21,7 +37,7 @@ module row_connections(w=3.5, h=0.4) {
   for(y = [1:3]) {
     translate([0, y*yoff, 0])
       union() {
-        translate([-39.5,-12.8, 0])
+        translate([-39.5,-13, 0])
 	rotate([0,0,-60])
 	square([w, 87], center=true);
 
@@ -38,36 +54,28 @@ module row_connections(w=3.5, h=0.4) {
 	  translate([x*xoff - sign(xoff)*scale_map_x[x+3], -x*0.5*yoff, 0])
 	  union() {
 	    connector1(8.5);
-	    translate([-5.5,4,0])
-	    rotate([0,0,-30])
-	      square([3,7], center=true);
 	  }
 	}
       }
   }
 
   // y == 0
-  translate([-33.5,-9.5, 0])
+  translate([-34,-10, 0])
     rotate([0,0,-60])
     square([w, 75], center=true);
 
-  for(x = [0:0]) {
+  let(x = 0) {
     translate([x*xoff - sign(xoff)*scale_map_x[x+3], x*0.5*yoff, 0])
       connector1();
   }
 
-  translate([37,-14, 0])
-    rotate([0,0,60])
+  translate([37,-13, 0])
+    rotate([0,0,62])
     square([w, 91], center=true);
 
-  for(x = [1:3]) {
+  for(x = [1:2]) {
     translate([x*xoff - sign(xoff)*scale_map_x[x+3], -x*0.5*yoff, 0])
-	  union() {
-	    connector1(8.5);
-	    translate([-5.2,4,0])
-	    rotate([0,0,-30])
-	      square([3, 8], center=true);
-	  }
+      connector1(8.5);
   }
 
   let(x = 4) {
@@ -120,7 +128,14 @@ module col_connections(w=3.5, h=0.4) {
   let( x = 4 ) {
     let( y = 1 ) {
       translate([x*xoff - sign(xoff)*scale_map_x[x+3], (y-x*0.5)*yoff, 0])
-	connector1(15, 40);
+	{
+	connector1(30, 40);
+
+
+	rotate([0,0,-30])
+	translate([-16,1])
+	  square([11, 4]);
+	}
     }
 
     let( y = 0 ) {
@@ -128,16 +143,19 @@ module col_connections(w=3.5, h=0.4) {
       union() {
 	connector1(10, 90);
 
-	translate([-13,-7,0])
-	rotate([0,0,61])
-	  union()
-	  {
-	    square([4, 75]);
+	translate([-35,5,0])
+	union() {
+	  square([32, 4]);
 
-	    translate([0,75,0])
-		rotate([0,0,-30])
+	  rotate([0,0,61])
+	  union() {
+	    square([4, 50]);
+
+	    translate([0,50,0])
+	      rotate([0,0,-30])
 	      square([4, 18]);
 	  }
+	}
       }
     }
   }
@@ -153,19 +171,20 @@ module print_plate_left() {
 
 module left_part1() {
   difference() {
-    translate([0,0, -8.2])
-      plate(xoff, yoff, 1, 45);
+    translate([0, 0, -8.5])
+      plate(xoff, yoff, 1, 40);
 
     switches(xoff, yoff);
-
-    translate([0,0,-8.2-0.39])
+    diodes();
+    
+    translate([0,0,-8.5-0.39])
       col_connections();
   }
 }
 
 module left_part2() {
   color([1,1,0])
-  translate([0,0,-8.2-0.39])
+  translate([0,0, -8.5-0.39])
     col_connections();
 }
 
@@ -173,9 +192,10 @@ module left_part3() {
   difference()
     {
       translate([0,0, -7.5])
-	plate(xoff, yoff, 0.7, 40);
+	plate(xoff, yoff, 1, 35);
 
 	switches(xoff, yoff);
+	diodes();
 
 	translate([0,0,-7.5-0.39])
 	row_connections();
@@ -192,8 +212,10 @@ module left_part5() {
   difference() {
     plate(xoff, yoff, 7.5);
     switches(xoff, yoff);
-  }  
+    diodes();
+  }
 }
+
 
 left_part1(); // thickness: 1mm, offset: 0mm
 //left_part2(); // thickness: 0.4mm, offset: 0.6mm
@@ -210,4 +232,3 @@ module print_plate_right() {
 
 //print_plate_left();
 //print_plate_right();
-
