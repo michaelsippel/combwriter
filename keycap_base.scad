@@ -29,14 +29,14 @@ module text_cap(angleX, angleY, height, t) {
   translate([0,0,-0.2])
   linear_extrude(0.2)
   union() {
-    translate([-2, 3,0])
-      text(t[0], size=6, valign="center", halign="center", font="Fira Code");
+    translate([0, 3.5,0])
+      text(t[0], size=5, valign="center", halign="center", font="Fira Code SemiBold");
 
-    translate([2, -3,0])
-      text(t[1], size=4.5, valign="center", halign="center", font="Fira Code");
+    translate([2.5, -3.5,0])
+      text(t[1], size=4.8, valign="center", halign="center", font="Fira Code");
 
-    translate([-2,-3,0])
-      text(t[2], size=4.5, valign="center", halign="center", font="Fira Code");
+    translate([-2.5,-3.5,0])
+      text(t[2], size=4.8, valign="center", halign="center", font="Fira Code");
   }
 }
 
