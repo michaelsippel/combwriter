@@ -76,9 +76,16 @@ module switches(xoff, yoff) {
   for(x = [-3:4]) {
     for(y = [-2:1]) {
       if( (x >= 0 || y > -2) && (x<4 || y<0) ) {
+	if( x >= 3 && y < -1 ) {
+	  translate([xoff*x + sign(x)*scale_map_x[x+3], yoff*(1.8+y - 0.5*abs(x)), 0])
+	    color([1,0,0])
+	    translate([0,0,1])
+	    mx_switch();	  
+	}
+	else
 
-	if( ! (x == 3 && y == -2) ) {
-	  translate([xoff*x - sign(xoff)*scale_map_x[x+3], yoff*(2+y - 0.5*abs(x)), 0])
+	if( ! (x >= 3 && y == -1) ) {
+	  translate([xoff*x + sign(x)*scale_map_x[x+3], yoff*(2+y - 0.5*abs(x)), 0])
 	    color([1,0,0])
 	    translate([0,0,1])
 	    mx_switch();

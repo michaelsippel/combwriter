@@ -29,7 +29,14 @@ module pin_headers() {
 module diodes() {
   for(x = [-3:4]) {
     for(y = [-2:1]) {
-      if( (x >= 0 || y > -2) && (x<4 || y<0) && (x!=3||y!=-2) ) {
+      	if( x >= 3 && y < -1 ) {
+	  translate([xoff*x + sign(x)*scale_map_x[x+3], yoff*(1.8+y - 0.5*abs(x)), 0])
+	    translate([-4, 1.5,-5])
+	    rotate([0,0,90])
+	    diode();
+	    } else
+
+      if( (x >= 0 || y > -2) && (x<4 || y<0) && (x<3||y!=-1) ) {
 
       translate([xoff*x - sign(xoff)*scale_map_x[x+3], yoff*(2+y - 0.5*abs(x)), 0])
 	translate([-4, 1.5,-5])
@@ -63,16 +70,26 @@ module row_connections(w=3.5, h=0.4) {
       union() {
         translate([-31,-8, 0])
 	rotate([0,0,-60])
-	square([w, 68], center=true);
+
+	  square([w, 68], center=true);
 
 	for(x = [-3:0]) {
 	  translate([x*xoff - sign(xoff)*scale_map_x[x+3], x*0.5*yoff, 0])
 	  connector1();
 	}
 
+	if(y > 1)
+	  {
 	translate([24,-7, 0])
 	  rotate([0,0,60])
 	  square([w, 63], center=true);
+	  }
+	else
+	  {
+	    translate([16,-2.5, 0])
+	  rotate([0,0,60])
+	      square([w, 45], center=true);
+}
 
 	for(x = [1:3]) {
 	  translate([x*xoff - sign(xoff)*scale_map_x[x+3], -x*0.5*yoff, 0])
@@ -93,24 +110,37 @@ module row_connections(w=3.5, h=0.4) {
       connector1();
   }
 
-  translate([37,-13, 0])
+  translate([20,-4, 0])
     rotate([0,0,62])
-    square([w, 91], center=true);
+    square([w, 52], center=true);
 
+  translate([42,-20, 0])
+    square([w, 10], center=true);
+
+  translate([55,-30, 0])
+    rotate([0,0,65])
+    square([w, 30], center=true);
+  
   for(x = [1:2]) {
     translate([x*xoff - sign(xoff)*scale_map_x[x+3], -x*0.5*yoff, 0])
       connector1(8.5);
   }
 
-  let(x = 4) {
-    for(y = [-2:-1]) {
-	translate([x*xoff - sign(xoff)*scale_map_x[x+3], y*yoff, 0])
-	connector2();
-    }
+  let( x = 3 ) {
+  translate([x*xoff - sign(xoff)*scale_map_x[x+3], (0.5-2.2)*yoff, 0])
+    connector1();
+  }
 
+  let(x = 4) {
+    let(y = -2) {
+      translate([x*xoff - sign(xoff)*scale_map_x[x+3], -2.2*yoff, 0])
+	connector1();
+    }
+    /*
     translate([x*xoff - sign(xoff)*scale_map_x[x+3], 26 - 3*yoff, 0])
       translate([5,0,0])
       square([w, 25], center=true);
+    */
   }
 
 
@@ -188,34 +218,44 @@ module col_connections(w=3.5, h=0.4) {
     translate([5+x*xoff - sign(xoff)*scale_map_x[x+3], 36 - x*0.5*yoff, 0])
       square([w, 40], center=true);
 
-    for(y = [1:3]) {
+    translate([14+x*xoff - sign(xoff)*scale_map_x[x+3], 1-x*0.5*yoff, 0])
+      rotate([0,0, 30])
+      square([w, 39], center=true);
+
+    for(y = [2:3]) {
       translate([x*xoff - sign(xoff)*scale_map_x[x+3], (y-x*0.5)*yoff, 0])
 	connector2();
     }
-  }
 
-  let( x = 4 ) {
-    let( y = 1 ) {
-      translate([x*xoff - sign(xoff)*scale_map_x[x+3], (y-x*0.5)*yoff, 0])
-	{
-	connector1(30, 40);
-
-
-	rotate([0,0,-30])
-	translate([-16,1])
-	  square([11, 4]);
-	}
+    let(y = 1) {
+      translate([x*xoff - sign(xoff)*scale_map_x[x+3], (-3.5+1.8)*yoff, 0])
+	connector2();
     }
-
+  }
+  
+  let( x = 4 ) {
     let( y = 0 ) {
-      translate([x*xoff - sign(xoff)*scale_map_x[x+3], (y-x*0.5)*yoff, 0])
-      union() {
-	connector1(10, 90);
+      translate([x*xoff - sign(xoff)*scale_map_x[x+3], (-4+1.8)*yoff, 0])
+	connector2();
 
+      translate([x*xoff - sign(xoff)*scale_map_x[x+3], (y-0.5*x)*yoff, 0])
+      union() {
 	translate([-35,5,0])
 	union() {
-	  square([32, 4]);
+	  square([6, 4]);
 
+	  translate([2,0,0])
+	  rotate([0,0, -60])
+	  square([12, 4]);
+
+	  translate([8,-11,0])
+	  square([11, 4]);
+
+	  translate([19,-11,0])
+	  rotate([0,0, 60])
+	  square([10, 4]);
+
+	  
 	  rotate([0,0,61])
 	  union() {
 	    square([4, 50]);
@@ -224,6 +264,7 @@ module col_connections(w=3.5, h=0.4) {
 	      rotate([0,0,-30])
 	      square([4, 18]);
 	  }
+
 	}
       }
     }
@@ -363,16 +404,48 @@ module left_part5() {
   }
 }
 
-//intersection() {
-// translate([-57,0,0])
-//     cube([60,200,30], center=true);
+module joystick() {
+  difference() {
+    union() {
+      cube([41,22,15], center=true);
 
-left_part1(); // thickness: 1mm, offset: 0mm
-//left_part2(); // thickness: 0.4mm, offset: 0.6mm
-//left_part3(); // thickness: 0.7mm, offset: 1.2mm
-//left_part4(); // thickness: 0.4mm, offset: 1.3mm
-//left_part5(); // offset: 1.7mm
-//}
+      translate([20,0,0])
+      cylinder(15, d=4.5, center=true, $fn=64);
+      translate([-10,-10,0])
+      cylinder(15, d=4, center=true, $fn=64);
+      translate([-10,10,0])
+      cylinder(15, d=4.5, center=true, $fn=64);
+
+      translate([20,0,0])
+      cylinder(30, d=1.3, center=true, $fn=64);
+      translate([-10,-10,0])
+      cylinder(30, d=1.3, center=true, $fn=64);
+      translate([-10,10,0])
+      cylinder(30, d=1.3, center=true, $fn=64);
+    }
+
+    translate([-20,0,0])
+      cylinder(15, d=4, center=true, $fn=64);
+
+    translate([10, -10.3, 0])
+      cylinder(15, d=4, center=true, $fn=64);
+    translate([10, 10.3, 0])
+      cylinder(15, d=4, center=true, $fn=64);
+  }  
+}
+
+  difference() {
+    union() {
+      left_part1(); // thickness: 1mm, offset: 0mm
+      left_part2(); // thickness: 0.4mm, offset: 0.6mm
+      left_part3(); // thickness: 0.7mm, offset: 1.2mm
+      left_part4(); // thickness: 0.4mm, offset: 1.3mm
+      left_part5(); // offset: 1.7mm
+    }
+
+    translate([3.6*xoff, -0.6*yoff, 0.5])
+      joystick();
+  }
 
 module print_plate_right() {
   difference() {
@@ -383,3 +456,5 @@ module print_plate_right() {
 
 //print_plate_left();
 //print_plate_right();
+
+
