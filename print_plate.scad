@@ -163,7 +163,7 @@ module row_connections(w=3.5, h=0.4) {
 
     translate([-9.6, -2, 0])
       rotate([0,0, 90])
-      square([4, 6], center=true);
+      square([4, 5.5], center=true);
 
     translate([-13.8, 2.5, 0])
       rotate([0,0, 30])
@@ -182,7 +182,7 @@ module row_connections(w=3.5, h=0.4) {
       translate([(x-1)*pin_off, 0]) {
 
 	translate([0, -4+abs(x)*1.5])
-	  square([1.7, 9-abs(x)*3], center=true);
+	  square([1.5, 9-abs(x)*3], center=true);
       }
     }
 
@@ -299,7 +299,7 @@ module col_connections(w=3.5, h=0.4) {
       translate([x*pin_off, 0]) {    
 	
 	translate([0, -3+abs(x)*1.25])
-	  square([1.7, 9-abs(x)*2.5], center=true);
+	  square([1.6, 9-abs(x)*2.5], center=true);
 
 	if( x != 0 ) {
 	  for(i = [0:abs(x)-1]) {
@@ -316,7 +316,7 @@ module col_connections(w=3.5, h=0.4) {
 		 {
 		   translate([sign(x)*10.5, abs(x)*2.5 -17])
 		     rotate([0, 0, 90])
-		     square([2, 10.6], center=true);
+		     square([1.5, 10.6], center=true);
 	         }
 		 else if( i == 1 && x == 2 )
 		 {
@@ -334,7 +334,7 @@ module col_connections(w=3.5, h=0.4) {
 		 {
 		   translate([sign(x)*11.8, abs(x)*2.5 -17])
 		     rotate([0, 0, 90])
-		     square([1.7, 13], center=true);
+		     square([1.5, 13], center=true);
 		 }
 	      }
 	    }
