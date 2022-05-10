@@ -1,10 +1,17 @@
 include <layout.scad>
 
-main_cluster(true, xoff, yoff);
 
-color([0.6, 0, 0])
-thumb_cluster(true, xoff, yoff);
+translate([-100,0,0])
+{
+  plate(xoff, yoff, 1);
+  main_cluster(true, 1, xoff, yoff);
+  thumb_cluster(true, 1, xoff, yoff);
+}
 
-color([0,0.5,0])
-plate(xoff, yoff);
+translate([100,0,0])
+{
+  plate(xoff, yoff, -1);
+  main_cluster(true, -1, xoff, yoff);
+  thumb_cluster(true, -1, xoff, yoff);
+}
 

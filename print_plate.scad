@@ -17,33 +17,23 @@ module pin_header(n=7, off=pin_off) {
   }
 }
 
-module pin_headers() {
+module pin_headers(s) {
+  mirror([s,0,0]){
   translate([-8.9, 73,-5.5])
     pin_header(7);
 
   translate([-75,8,-5])
     rotate([0,0,-60])
-    pin_header(4);
+    pin_header(4);    
+  }
 }
 
-module diodes() {
-  for(x = [-3:4]) {
-    for(y = [-2:1]) {
-      	if( x >= 3 && y < -1 ) {
-	  translate([xoff*x + sign(x)*scale_map_x[x+3], yoff*(1.8+y - 0.5*abs(x)), 0])
-	    translate([-4, 1.5,-5])
-	    rotate([0,0,90])
-	    diode();
-	    } else
-
-      if( (x >= 0 || y > -2) && (x<4 || y<0) && (x<3||y!=-1) ) {
-
-      translate([xoff*x - sign(xoff)*scale_map_x[x+3], yoff*(2+y - 0.5*abs(x)), 0])
-	translate([-4, 1.5,-5])
-	rotate([0,0,90])
-	diode();
-      }
-    }
+module diodes(s) {
+  for(pos = switch_positions(xoff, yoff, s)) {
+    translate(pos[1])
+      translate([-4, 1.5,-5])
+      rotate([0,0,90])
+      diode();    
   }
 }
 
@@ -346,43 +336,35 @@ module col_connections(w=3.5, h=0.4) {
   }
 }
 
-module print_plate_left() {
-  difference() {
-    plate(xoff, yoff, 6);
-    switches(xoff, yoff);
-  }
-}
-
-module left_part1() {
+module part1(s) {
   difference() {
     translate([0, 0, -7.5])
-      plate(xoff, yoff, 2, 37);
+      plate(xoff, yoff, s, 2, 37);
 
-    switches(xoff, yoff);
-    diodes();
-    pin_headers();
-    
+    switches(xoff, yoff, s);
+    diodes(s);
+
+    pin_headers(s);
     translate([0,0,-7.5-0.39])
       col_connections();
   }
 }
 
-module left_part2() {
+module part2(s) {
   color([1,1,0])
   translate([0,0, -7.5-0.39])
     col_connections();
 }
 
-module left_part3() {
+module part3(s) {
   difference()
     {
       translate([0,0, -6.5])
-	plate(xoff, yoff, 1, 37);
+	plate(xoff, yoff, s, 1, 37);
 
-	switches(xoff, yoff);
-	diodes();
-
-	pin_headers();
+      switches(xoff, yoff, s);
+	diodes(s);
+	pin_headers(s);
 
 	translate([0,0,-6.5-0.39])
 	  row_connections();
@@ -395,12 +377,12 @@ module left_part4() {
     row_connections();
 }
 
-module left_part5() {
+module part5(s) {
   difference() {
-    plate(xoff, yoff, 6.5, 37);
-    switches(xoff, yoff);
-    diodes();
-    pin_headers();
+    plate(xoff, yoff, s, 6.5, 37);
+    switches(xoff, yoff, s);
+    diodes(s);
+    pin_headers(s);
   }
 }
 
@@ -434,27 +416,25 @@ module joystick() {
   }  
 }
 
+module print_plate(s) {
   difference() {
     union() {
-      left_part1(); // thickness: 1mm, offset: 0mm
-      left_part2(); // thickness: 0.4mm, offset: 0.6mm
-      left_part3(); // thickness: 0.7mm, offset: 1.2mm
-      left_part4(); // thickness: 0.4mm, offset: 1.3mm
-      left_part5(); // offset: 1.7mm
+      //part1(s);
+      //left_part2();
+      //part3(s);
+      //left_part4();
+      part5(s);
     }
 
+    if(s == -1)
+    translate([-3.6*xoff, -0.6*yoff, 0.5])
+      rotate([0,0,180])
+      joystick();
+    if(s == 1)
     translate([3.6*xoff, -0.6*yoff, 0.5])
       joystick();
   }
+}  
 
-module print_plate_right() {
-  difference() {
-    plate(-xoff, yoff, 7);
-    switches(-xoff, yoff);
-  }
-}
-
-//print_plate_left();
-//print_plate_right();
-
+print_plate(-1);
 
