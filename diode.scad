@@ -14,12 +14,16 @@ module diode() {
     cylinder(10, d=1.5, $fn=32);
 }
 
-module diode_pads() {
-  translate([-4.5, 0,-10])
-    circle(d=3.0, $fn=6);
 
-  translate([4.5, 0,-10])
-    circle(d=3.0, $fn=6);
+include <layout.scad>
+
+module diodes(s) {
+  for(pos = switch_positions(xoff, yoff, s)) {
+    translate(pos[1])
+      translate([-4, 1.5,-5])
+      rotate([0,0,90])
+      diode();    
+  }
 }
 
 
