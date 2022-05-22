@@ -1,6 +1,6 @@
 include <connectors.scad>
 
-module row_connections_left(w=3.5, h=0.4) {
+module row_connections_left(w=3.5, h=0.6) {
   linear_extrude(h)
     union() {
   for(y = [1:3]) {
@@ -128,8 +128,7 @@ module row_connections_left(w=3.5, h=0.4) {
   }
 }
 
-
-module col_connections_left(w=3.5, h=0.4) {
+module col_connections_left(w=3.5, h=0.5) {
   linear_extrude(h)
   union()
   {

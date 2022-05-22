@@ -8,10 +8,10 @@ module diode() {
   }
 
   translate([-4.5, 0,-10])
-    cylinder(10, d=1.5, $fn=32);
+    cylinder(10, d=2, $fn=6);
 
   translate([4.5, 0,-10])
-    cylinder(10, d=1.5, $fn=32);
+    cylinder(10, d=2, $fn=6);
 }
 
 

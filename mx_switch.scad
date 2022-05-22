@@ -49,10 +49,10 @@ module mx_switch() {
       cylinder(h=5, d=4, $fn=32);
 
     translate([3.5, -2.7, -10])
-      cylinder(h=5, d=2, $fn=32);
+      cylinder(h=5, d=2, $fn=6);
 
     translate([-3.0, -5, -10])
-      cylinder(h=5, d=2, $fn=32);
+      cylinder(h=5, d=2, $fn=6);
   }
 }
 

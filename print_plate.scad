@@ -8,14 +8,14 @@ pin_off = 2.54;
 
 module part1(s) {
   difference() {
-    translate([0, 0, -7.5])
+    translate([0, 0, -7.8])
       plate(xoff, yoff, s, 2, 37);
 
     switches(xoff, yoff, s);
     diodes(s);
 
     pin_headers(s);
-    translate([0,0,-7.5-0.39])
+    translate([0,0,-7.8-0.5])
     {
       if(s == 1)
 	col_connections_left();
@@ -27,7 +27,7 @@ module part1(s) {
 
 module part2(s) {
   color([1,1,0])
-  translate([0,0, -7.5-0.39])
+  translate([0,0, -7.8-0.5])
       if(s == 1)
 	col_connections_left();
       else
@@ -38,13 +38,13 @@ module part3(s) {
   difference()
     {
       translate([0,0, -6.5])
-	plate(xoff, yoff, s, 1, 37);
+	plate(xoff, yoff, s, 1.25, 37);
 
       switches(xoff, yoff, s);
 	diodes(s);
 	pin_headers(s);
 
-	translate([0,0,-6.5-0.39])
+	translate([0,0,-6.6-0.6])
       if(s == 1)
 	row_connections_left();
       else
@@ -54,17 +54,27 @@ module part3(s) {
 
 module part4(s) {
   color([0,1,0])
-  translate([0,0,-6.5-0.39])
+  translate([0,0,-6.6-0.6])
     if(s == 1)
       row_connections_left();
     else
-      mirror([0,0,0])
       row_connections_right();
 }
 
 module part5(s) {
   difference() {
-    plate(xoff, yoff, s, 6.5, 37);
+    translate([0,0,-6.0])
+    plate(xoff, yoff, s, 0.5, 37);
+
+    switches(xoff, yoff, s);
+    diodes(s);
+    pin_headers(s);
+  }
+}
+
+module part6(s) {
+  difference() {
+    plate(xoff, yoff, s, 6.0, 37);
     switches(xoff, yoff, s);
     diodes(s);
     pin_headers(s);
@@ -104,11 +114,12 @@ module joystick() {
 module print_plate(s) {
   difference() {
     union() {
-      part1(s);
+      //part1(s);
       //part2(s);
       //part3(s);
-      part4(s);
+      //part4(s);
       //part5(s);
+      //part6(s);
     }
 
     if(s == -1)
@@ -120,10 +131,10 @@ module print_plate(s) {
       joystick();
   }
 }  
-
+/*
 translate([-100,0,0])
 print_plate(1);
 
 translate([100,0,0])
 print_plate(-1);
-
+*/
