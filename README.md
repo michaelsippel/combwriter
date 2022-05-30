@@ -4,3 +4,8 @@ Ergonomical Split-Typewriter with fully 3D-Printed Circuit Board and Hexagonal K
 
 ![Prototype](combwriter.jpg)
 
+
+
+## License
+
+[GPLv3](COPYING)
