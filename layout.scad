@@ -40,7 +40,7 @@ text_left = [
 ];
 text_right = [
 	["", "K!×", "H<Ψ", "G>Γ", "F=Φ", "ẞ"],
-	[".'ϑ", "S?Σ", "N(ℕ", "R)ℝ", "T-∂", "D:Δ", ""],
+	["", "S?Σ", "N(ℕ", "R)ℝ", "T-∂", "D:Δ", ""],
 	["", "B+β", "M%μ", ",\"ϱ", "Y@∇", "J;θ", ""],
 	["", "", "", "", "", ""],
 ];
@@ -76,6 +76,31 @@ module main_cluster( proto=false, s=1, xoff=20, yoff=30 ) {
 	// special treatment for top key in center column
 	translate([0, 3*yoff, 0])
 	  key( 20, 0, 18.4, 0.0, proto, get_text(s, x, y) );
+      } else if( x == 3 && y == 0 ) {
+	translate(pos[1])
+	difference() {
+	  height = 9.2 + height_map_x[x+3] + height_map_y[y+1];
+	  key(angle_map_y[y+1],
+	      angle_map_x[s*x+3],
+	      height,
+	      scale_map_x[x+3],
+	      proto,
+	      get_text(s, x, y));
+
+	  if( s == -1 )
+	    mirror([1,0,0])
+	    {
+	      translate([0,-11.5,0])
+		rotate([0,-15,60])
+		cube([10,40,40], center=true);
+	    }
+	  else
+	    {
+	      translate([0,-11.5,0])
+		rotate([0,-15,60])
+		cube([10,40,40], center=true);
+	    }
+	}
       } else {
 	translate(pos[1])
 	  key(angle_map_y[y+1],
@@ -109,30 +134,48 @@ module thumb_cluster( proto=false, s=1, xoff=20, yoff=25 ) {
   for(pos = switch_positions_thumb(xoff, yoff, s))
     let( x = pos[0][0], y = pos[0][1] )
       translate(pos[1])
-      key(15, s*thumb_angle_map[x], thumb_height_map[x], 0.0, proto, get_text(3, x));
+      difference() {
+	  key(15, s*thumb_angle_map[x], thumb_height_map[x], 0.0, proto, get_text(3, x));
+
+	  if ( x == 3 && y == -3 ) {
+	    if( s == -1 )
+	      mirror([1,0,0])
+		{
+		  translate([0,10.5,0])
+		    rotate([0,-15,-60])
+		    cube([10,40,40], center=true);
+		}
+	    else
+	      {
+		  translate([0,10.5,0])
+		    rotate([0,-15,-60])
+		    cube([10,40,40], center=true);
+	      }	      
+	  }
+      }
 }
 
 module plate(xoff, yoff, s=1, height=2, d=30) {
   translate([0,0,-height])
     {
-  for(pos = switch_positions(xoff, yoff, s) )
-    {
-      translate(pos[1])
+      for(pos = switch_positions(xoff, yoff, s) )
 	{
-	cylinder(h=height, d=d, $fn=6);
+	  translate(pos[1])
+	    {
+	      cylinder(h=height, d=d, $fn=6);
 
-	translate([-s*scale_map_x[pos[0][0]+3], 0,0])
-	  cylinder(h=height, d=d, $fn=6);
+	      translate([-s*scale_map_x[pos[0][0]+3], 0,0])
+		cylinder(h=height, d=d, $fn=6);
+	    }
 	}
-    }
 
-  translate([s*joystick_position[0], joystick_position[1], joystick_position[2]])
-  {
-    cylinder(h=height, d=d, $fn=6);
+      translate([s*joystick_position[0], joystick_position[1], joystick_position[2]])
+	{
+	  cylinder(h=height, d=d, $fn=6);
 
-    translate([s*xoff, -yoff*0.5, 0])
-      cylinder(h=height, d=d, $fn=6);
-  }
+	  translate([s*xoff, -yoff*0.5, 0])
+	    cylinder(h=height, d=d, $fn=6);
+	}
     }
 }
 
