@@ -55,7 +55,7 @@ function switch_positions_thumb1(xoff, yoff, s) = [
 ];
 function switch_positions_thumb2(xoff, yoff, s) = [
   for(x = [3:4])
-    [[x, -x], [s*xoff*x, -4-yoff*(x - 0.5*x), 0]]
+    [[x, -x], [s*xoff*x, -6-yoff*(x - 0.5*x), 0]]
 ];
 function switch_positions_thumb(xoff, yoff, s) = concat(switch_positions_thumb1(xoff, yoff, s), switch_positions_thumb2(xoff, yoff, s));
 function switch_positions_main(xoff, yoff, s) = [
@@ -90,14 +90,14 @@ module main_cluster( proto=false, s=1, xoff=20, yoff=30 ) {
 	  if( s == -1 )
 	    mirror([1,0,0])
 	    {
-	      translate([0,-11.5,0])
-		rotate([0,-15,60])
+	      translate([0,-10,0])
+		rotate([0,-20,60])
 		cube([10,40,40], center=true);
 	    }
 	  else
 	    {
-	      translate([0,-11.5,0])
-		rotate([0,-15,60])
+	      translate([0,-10,0])
+		rotate([0,-20,60])
 		cube([10,40,40], center=true);
 	    }
 	}
@@ -141,14 +141,14 @@ module thumb_cluster( proto=false, s=1, xoff=20, yoff=25 ) {
 	    if( s == -1 )
 	      mirror([1,0,0])
 		{
-		  translate([0,10.5,0])
-		    rotate([0,-15,-60])
+		  translate([0,10,0])
+		    rotate([0,-20,-60])
 		    cube([10,40,40], center=true);
 		}
 	    else
 	      {
-		  translate([0,10.5,0])
-		    rotate([0,-15,-60])
+		  translate([0,10,0])
+		    rotate([0,-20,-60])
 		    cube([10,40,40], center=true);
 	      }	      
 	  }

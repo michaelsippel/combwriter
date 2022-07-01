@@ -47,7 +47,8 @@ module row_connections_right(w=3.5, h=0.6) {
     }
 
   // y == 0
-  translate([-68, -30, 0])
+
+  translate([-68, -32, 0])
     rotate([0, 0, -60])
     square([w, 24], center=true);
 
@@ -55,9 +56,9 @@ module row_connections_right(w=3.5, h=0.6) {
     rotate([0, 0, -60])
     square([w, 20], center=true);
 
-  translate([-51, -29, 0])
-    rotate([0, 0, -120])
-    square([w, 20], center=true);
+  translate([-51, -30, 0])
+    rotate([0, 0, -114])
+    square([w, 19], center=true);
 
   translate([-27, -17, 0])
     square([w, 16], center=true);
@@ -154,9 +155,10 @@ module col_connections_right(w=3.5, h=0.5) {
 	  translate([-9, -30, 0])
 	    rotate([0,0, -30])
 	    square([w, 37], center=true);
+	  
+	  translate([-xoff, -2.7*yoff, 0])
+	    square([w, 15], center=true);
 
-	  translate([-xoff, -2.65*yoff, 0])
-	    square([w, 13], center=true);
 	  }
       }
 
@@ -165,10 +167,10 @@ module col_connections_right(w=3.5, h=0.5) {
 	rotate([0,0,-61])
 	  union() {
 	  square([4, 78]);
-
 	  translate([0.5,76,0])
 	    rotate([0,0,25])
 	    square([4, 10]);
+
 	}
       }
 
