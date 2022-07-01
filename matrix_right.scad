@@ -18,7 +18,7 @@
 include <connectors.scad>
 include <layout.scad>
 
-module row_connections_right(w=3.5, h=0.6) {
+module row_connections_right(w=3.5, h=0.61) {
   linear_extrude(h)
   union() {
 
@@ -98,16 +98,17 @@ module row_connections_right(w=3.5, h=0.6) {
   translate([75, 8, 0])
     rotate([0,0,-120])
     union() {
-      translate([-7, -15, 0])
-	rotate([0,0, -34])
+
+      translate([-7, -15.4, 0])
+	rotate([0,0, -32.8])
 	square([2.5, 25], center=true);
 
-      translate([2.8, -12, 0])
-	rotate([0,0, 0])
-	square([2.2, 8], center=true);
+      translate([2.7, -13, 0])
+	rotate([0,0,2])
+	square([1.5, 10], center=true);
 
-      translate([11.5, -6.4, 0])
-	rotate([0,0, 91])
+      translate([11.6, -6.5, 0])
+	rotate([0,0, 90])
 	square([2.2, 14.5], center=true);
 
       translate([9.6, -2, 0])
@@ -201,9 +202,9 @@ module col_connections_right(w=3.5, h=0.5) {
 
 	for(x = [-3:3]) {
 	  translate([x*pin_off, 0]) {    
-	
+
 	    translate([0, -3+abs(x)*1.25])
-	      square([1.6, 9-abs(x)*2.5], center=true);
+	      square([1.5, 9-abs(x)*2.5], center=true);
 
 	    if( x != 0 ) {
 	      for(i = [0:abs(x)-1]) {
@@ -213,7 +214,7 @@ module col_connections_right(w=3.5, h=0.5) {
 		  translate([1.4*x+sign(x)*1.1, -9])
 		    rotate([0,0,180 + 30*sign(x)])
 		    translate([0, 3.5-abs(x)*2.8])
-		    square([1.7, 12], center=true);
+		    square([1.3, 12], center=true);
 
 		  if( x > 0 || i<abs(x)-1 ) {
 
@@ -221,13 +222,13 @@ module col_connections_right(w=3.5, h=0.5) {
 		      {
 			translate([sign(x)*10.5, abs(x)*2.5 -17])
 			  rotate([0, 0, 90])
-			  square([1.5, 10.6], center=true);
+			  square([1.3, 10.6], center=true);
 		      }
 		    else if( i == 1 && x == 2 )
 		      {
 			translate([sign(x)*8.5, abs(x)*2.5 -17])
 			  rotate([0, 0, 90])
-			  square([1.7, 6.5], center=true);
+			  square([1.3, 6.5], center=true);
 		      }
 		    else if( i == 2 && x == 3 )
 		      {
@@ -239,7 +240,7 @@ module col_connections_right(w=3.5, h=0.5) {
 		      {
 			translate([sign(x)*11.8, abs(x)*2.5 -17])
 			  rotate([0, 0, 90])
-			  square([1.5, 13], center=true);
+			  square([1.3, 13], center=true);
 		      }
 		  }
 		}

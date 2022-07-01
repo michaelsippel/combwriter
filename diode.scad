@@ -36,7 +36,7 @@ include <layout.scad>
 module diodes(s) {
   for(pos = switch_positions(xoff, yoff, s)) {
     translate(pos[1])
-      translate([-4, 1.5,-5])
+      translate([-4, 1.5,-5.7])
       rotate([0,0,90])
       diode();    
   }
