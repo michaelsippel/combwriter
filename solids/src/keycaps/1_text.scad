@@ -15,18 +15,11 @@
  <https://www.gnu.org/licenses/>.
 */
 
-include <layout.scad>
+include <../layout/layout.scad>
 
-
-translate([-100,0,0])
+intersection()
 {
-main_cluster(false, 1);
-main_cluster_text(1);
+  main_cluster_text(s);
+  cube([200, 200, 3], center=true);
 }
 
-translate([100,0,0])
-{
-main_cluster(false, -1);
-main_cluster_text(-1);
-}
- 

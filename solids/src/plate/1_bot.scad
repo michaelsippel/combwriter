@@ -15,7 +15,24 @@
  <https://www.gnu.org/licenses/>.
 */
 
-include <print_plate.scad>
+include <../stencils/matrix_left.scad>
+include <../stencils/matrix_right.scad>
+include <../stencils/pin_header.scad>
+include <../stencils/diode.scad>
 
-part4(-1);
+difference() {
+  translate([0, 0, -7.8])
+    plate(xoff, yoff, s, 2, 37);
 
+  switches(xoff, yoff, s);
+  diodes(s);
+
+  pin_headers(s);
+  translate([0,0,-7.8-0.5])
+    {
+      if(s == 1)
+	col_connections_left();
+      else
+	col_connections_right();
+    }
+}

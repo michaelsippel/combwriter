@@ -15,13 +15,27 @@
  <https://www.gnu.org/licenses/>.
 */
 
-include <print_plate.scad>
+include <../stencils/diode.scad>
+include <../stencils/pin_header.scad>
+include <../stencils/joystick.scad>
+include <../layout/layout.scad>
 
 difference()
 {
-  part6(-1);
+  difference() {
+    plate(xoff, yoff, s, 6.0, 37);
+    switches(xoff, yoff, s);
+    diodes(s);
+    pin_headers(s);
+  }
 
-  translate([-3.6*xoff, -0.65*yoff, 0.5])
+if(s == 1)
+  mirror([1,0,0])
+  translate(joystick_position_right)
     rotate([0,0,180])
     joystick();
+ else
+   translate(joystick_position_right)
+     rotate([0,0,180])
+     joystick();
 }

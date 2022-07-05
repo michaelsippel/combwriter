@@ -16,47 +16,50 @@
 */
 
 include <connectors.scad>
+include <pin_header.scad>
+include <../layout/layout.scad>
 
-module row_connections_left(w=3.5, h=0.6) {
+module row_connections_left(w=2.5, h=0.61) {
   linear_extrude(h)
     union() {
-  for(y = [1:3]) {
-    translate([0, y*yoff, 0])
-      union() {
+    for(y = [1:3]) {
+      translate([0, y*yoff, 0])
+	union() {
         translate([-31,-8, 0])
-	rotate([0,0,-60])
-
+	  rotate([0,0,-60])
 	  square([w, 68], center=true);
 
 	for(x = [-3:0]) {
 	  translate([x*xoff - sign(xoff)*scale_map_x[x+3], x*0.5*yoff, 0])
-	  connector1();
+	    connector1();
 	}
 
 	if(y > 1)
 	  {
-	translate([24,-7, 0])
-	  rotate([0,0,60])
-	  square([w, 63], center=true);
+	    translate([24,-7, 0])
+	      rotate([0,0,60])
+	      square([w, 63], center=true);
 	  }
 	else
 	  {
 	    translate([16,-2.5, 0])
-	  rotate([0,0,60])
+	      rotate([0,0,60])
 	      square([w, 45], center=true);
-}
+	  }
 
 	for(x = [1:3]) {
+	  if( y > 1 || x < 3 )
 	  translate([x*xoff - sign(xoff)*scale_map_x[x+3], -x*0.5*yoff, 0])
-	  union() {
+	    union() {
 	    connector1(8.5);
 	  }
 	}
+
       }
-  }
+    }
 
   // y == 0
-  translate([-27,-6.6, 0])
+  translate([-27,-6, 0])
     rotate([0,0,-60])
     square([w, 60], center=true);
 
@@ -72,23 +75,23 @@ module row_connections_left(w=3.5, h=0.6) {
   translate([42,-20, 0])
     square([w, 10], center=true);
 
-  translate([55,-30, 0])
-    rotate([0,0,65])
-    square([w, 30], center=true);
-  
+  translate([55,-30.5, 0])
+    rotate([0,0,63])
+    square([w, 31], center=true);
+
   for(x = [1:2]) {
     translate([x*xoff - sign(xoff)*scale_map_x[x+3], -x*0.5*yoff, 0])
       connector1(8.5);
   }
 
   let( x = 3 ) {
-  translate([x*xoff - sign(xoff)*scale_map_x[x+3], (0.5-2.2)*yoff, 0])
+  translate([x*xoff - sign(xoff)*scale_map_x[x+3], -6-0.5*x*yoff, 0])
     connector1();
   }
 
   let(x = 4) {
     let(y = -2) {
-      translate([x*xoff - sign(xoff)*scale_map_x[x+3], -2.2*yoff, 0])
+      translate([x*xoff - sign(xoff)*scale_map_x[x+3], -6-0.5*x*yoff, 0])
 	connector1();
     }
     /*
@@ -96,7 +99,7 @@ module row_connections_left(w=3.5, h=0.6) {
       translate([5,0,0])
       square([w, 25], center=true);
     */
-  }
+    }
 
 
   translate([-75, 8,-5])
@@ -109,12 +112,10 @@ module row_connections_left(w=3.5, h=0.6) {
     translate([-2.5, -12, 0])
       rotate([0,0, 0])
       square([2.2, 7], center=true);
-
     
     translate([-11, -6.4, 0])
       rotate([0,0, 90])
       square([2.2, 13.5], center=true);
-
 
     translate([-9.6, -2, 0])
       rotate([0,0, 90])
@@ -174,8 +175,8 @@ module col_connections_left(w=3.5, h=0.5) {
       square([w, 40], center=true);
 
     translate([14+x*xoff - sign(xoff)*scale_map_x[x+3], 1-x*0.5*yoff, 0])
-      rotate([0,0, 30])
-      square([w, 39], center=true);
+      rotate([0, 0, 25])
+      square([w, 44], center=true);
 
     for(y = [2:3]) {
       translate([x*xoff - sign(xoff)*scale_map_x[x+3], (y-x*0.5)*yoff, 0])
@@ -183,14 +184,15 @@ module col_connections_left(w=3.5, h=0.5) {
     }
 
     let(y = 1) {
-      translate([x*xoff - sign(xoff)*scale_map_x[x+3], (-3.5+1.8)*yoff, 0])
+      color([0,0,1])
+      translate([x*xoff - sign(xoff)*scale_map_x[x+3], -6-x*0.5*yoff, 0])
 	connector2();
     }
   }
   
   let( x = 4 ) {
     let( y = 0 ) {
-      translate([x*xoff - sign(xoff)*scale_map_x[x+3], (-4+1.8)*yoff, 0])
+      translate([x*xoff - sign(xoff)*scale_map_x[x+3], -6-x*0.5*yoff, 0])
 	connector2();
 
       translate([x*xoff - sign(xoff)*scale_map_x[x+3], (y-0.5*x)*yoff, 0])
@@ -199,18 +201,17 @@ module col_connections_left(w=3.5, h=0.5) {
 	union() {
 	  square([6, 4]);
 
-	  translate([2,0,0])
-	  rotate([0,0, -60])
-	  square([12, 4]);
+	  translate([2,2,0])
+	  rotate([0,0, -65])
+	  square([15, 4]);
 
-	  translate([8,-11,0])
+	  translate([8,-13, 0])
 	  square([11, 4]);
 
-	  translate([19,-11,0])
+	  translate([19,-13,0])
 	  rotate([0,0, 60])
 	  square([10, 4]);
 
-	  
 	  rotate([0,0,61])
 	  union() {
 	    square([4, 50]);
@@ -254,7 +255,7 @@ module col_connections_left(w=3.5, h=0.5) {
       translate([x*pin_off, 0]) {    
 	
 	translate([0, -3+abs(x)*1.25])
-	  square([1.6, 9-abs(x)*2.5], center=true);
+	  square([1.5, 9-abs(x)*2.5], center=true);
 
 	if( x != 0 ) {
 	  for(i = [0:abs(x)-1]) {
@@ -263,7 +264,7 @@ module col_connections_left(w=3.5, h=0.5) {
 	      translate([1.4*x+sign(x)*1.1, -9])
 		rotate([0,0,180 + 30*sign(x)])
 		translate([0, 3.5-abs(x)*2.8])
-		square([1.7, 12], center=true);
+		square([1.3, 12], center=true);
 
 	      if( x > 0 || i<abs(x)-1 ) {
 
@@ -271,13 +272,13 @@ module col_connections_left(w=3.5, h=0.5) {
 		 {
 		   translate([sign(x)*10.5, abs(x)*2.5 -17])
 		     rotate([0, 0, 90])
-		     square([1.5, 10.6], center=true);
+		     square([1.3, 10.6], center=true);
 	         }
 		 else if( i == 1 && x == 2 )
 		 {
 		   translate([sign(x)*8.5, abs(x)*2.5 -17])
 		     rotate([0, 0, 90])
-		     square([1.7, 6.5], center=true);
+		     square([1.3, 6.5], center=true);
 		 }
 		 else if( i == 2 && x == 3 )
 		 {
@@ -289,7 +290,7 @@ module col_connections_left(w=3.5, h=0.5) {
 		 {
 		   translate([sign(x)*11.8, abs(x)*2.5 -17])
 		     rotate([0, 0, 90])
-		     square([1.5, 13], center=true);
+		     square([1.3, 13], center=true);
 		 }
 	      }
 	    }

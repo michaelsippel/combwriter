@@ -15,7 +15,16 @@
  <https://www.gnu.org/licenses/>.
 */
 
-include <print_plate.scad>
+include <../layout/layout.scad>
 
-part1(-1);
+intersection()
+{
+  union()
+  {
+    main_cluster(false, s);
+    thumb_cluster(false, s);
+  }
+
+  cube([200, 200, 3], center=true);
+}
 

@@ -15,27 +15,14 @@
  <https://www.gnu.org/licenses/>.
 */
 
-module pin_header(n=7, off=pin_off) {
-  for(x = [0:(n-1)]) {
+include <../stencils/pin_header.scad>
+include <../stencils/matrix_left.scad>
+include <../stencils/matrix_right.scad>
 
-    translate([x*off, 0, 1.8])
-      cube([1.5, 1.5, 12], center=true);
-
-    translate([x*off, 0, 0])
-      cube([2.6, 2.75, 2.5], center=true);
-
-    translate([x*off, 0, 4+1.25])
-      cube([2.66, 2.75, 8 ], center=true);
-  }
-}
-
-module pin_headers(s) {
-  translate([-8.7, 72.6, -5.5])
-    pin_header(7);
-
-mirror([max(-s,0), 0, 0])
-  translate([-74.6,8.5,-5])
-    rotate([0,0,-60])
-    pin_header(4);
-}
+color([1,1,0])
+translate([0,0, -7.8-0.5])
+if(s == 1)
+  col_connections_left();
+ else
+   col_connections_right();
 

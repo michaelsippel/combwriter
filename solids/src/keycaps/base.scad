@@ -15,7 +15,7 @@
  <https://www.gnu.org/licenses/>.
 */
 
-include <mx_switch.scad>
+include <../stencils/mx_switch.scad>
 
 module base_cap(height, stretchX, d=23) {  
   scale([1, 0.95, 1])

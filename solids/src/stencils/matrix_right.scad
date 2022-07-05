@@ -16,7 +16,8 @@
 */
 
 include <connectors.scad>
-include <layout.scad>
+include <pin_header.scad>
+include <../layout/layout.scad>
 
 module row_connections_right(w=3.5, h=0.61) {
   linear_extrude(h)

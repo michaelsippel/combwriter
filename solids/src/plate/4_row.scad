@@ -15,6 +15,13 @@
  <https://www.gnu.org/licenses/>.
 */
 
-include <print_plate.scad>
+include <../stencils/matrix_left.scad>
+include <../stencils/matrix_right.scad>
 
-part2(-1);
+color([0,1,0])
+translate([0,0,-6.6-0.6])
+if(s == 1)
+  row_connections_left();
+else
+  row_connections_right();
+

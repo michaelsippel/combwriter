@@ -15,20 +15,16 @@
  <https://www.gnu.org/licenses/>.
 */
 
-include <layout.scad>
+include <../layout/layout.scad>
 
-
-translate([-100,0,0])
+difference()
 {
-  plate(xoff, yoff, 1);
-  main_cluster(true, 1, xoff, yoff);
-  thumb_cluster(true, 1, xoff, yoff);
-}
+  union()
+  {
+    main_cluster(false, s);
+    thumb_cluster(false, s);
+  }
 
-translate([100,0,0])
-{
-  plate(xoff, yoff, -1);
-  main_cluster(true, -1, xoff, yoff);
-  thumb_cluster(true, -1, xoff, yoff);
+  cube([200, 200, 3], center=true);
 }
 

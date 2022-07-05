@@ -15,59 +15,11 @@
  <https://www.gnu.org/licenses/>.
 */
 
-include <keycap_base.scad>
-include <mx_switch.scad>
+include <../keycaps/base.scad>
+include <../stencils/mx_switch.scad>
 
-height_map_x = [ 12.65 , 9.2 , 4.1, 2.3, 6.9, 10.36, 12.65 ];
-height_map_y = [ 1.15, 0.0, 3.6 ];
-
-angle_map_x = [ 10, 10, 8, 0, -15, -10, -10 ];
-angle_map_y = [ -10, 4, 15 ];
-
-scale_map_x = [ 2.3, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ];
-
-thumb_height_map = [ 24, 20, 16.5, 15, 16 ];
-thumb_angle_map = [ 5, 5, 3, 0, -15 ];
-
-xoff = 17.9;
-yoff = 19.3;
-
-text_left = [
-	["", "X…Ξ", "V_√", "L\[Λ", "C]χ", "W^Ω", ""],
-	["", "U\\⊂", "I/∫", "A{∀", "E}∃", "O*∈", ""],
-	["", "Ü#∪", "Ö$∩", "Ä|", "P~Π", "Z`ℤ", ""],
-	["", "", "", "", "", ""],
-];
-text_right = [
-	["", "K!×", "H<Ψ", "G>Γ", "F=Φ", "ẞ"],
-	["", "S?Σ", "N(ℕ", "R)ℝ", "T-∂", "D:Δ", ""],
-	["", "B+β", "M%μ", ",\"ϱ", "Y@∇", "J;θ", ""],
-	["", "", "", "", "", ""],
-];
-
-function gtl(s,x,y) = [ if(s == 1) text_left[1-y][x+3] ];
-function gtr(s,x,y) = [ if(s == -1) text_right[1-y][3-x] ];
-function get_text(s, x, y) = concat(gtl(s,x,y), gtr(s,x,y));
-
-function switch_positions_thumb1(xoff, yoff, s) = [
-  for(x = [0:2])
-    [[x, -x], [s*xoff*x, -yoff*(x - 0.5*x), 0]]
-];
-function switch_positions_thumb2(xoff, yoff, s) = [
-  for(x = [3:4])
-    [[x, -x], [s*xoff*x, -6-yoff*(x - 0.5*x), 0]]
-];
-function switch_positions_thumb(xoff, yoff, s) = concat(switch_positions_thumb1(xoff, yoff, s), switch_positions_thumb2(xoff, yoff, s));
-function switch_positions_main(xoff, yoff, s) = [
-  for(x = [-3:3])
-    for(y = [-1:1])
-      if(x < 3 || y >= 0)
-	[[x,y], [s*xoff * x - s*scale_map_x[x+3], yoff*(2+y - 0.5*abs(x)), 0]]
-];
-
-joystick_position = [ 3*xoff, -0.5*yoff, 0 ];
-
-function switch_positions(xoff, yoff, s) = concat(switch_positions_main(xoff, yoff, s), switch_positions_thumb(xoff,yoff, s));
+include <positions.scad>
+include <text/neo.scad>
 
 module main_cluster( proto=false, s=1, xoff=20, yoff=30 ) {
   for(pos = switch_positions_main(xoff, yoff, s) ) {
@@ -169,12 +121,13 @@ module plate(xoff, yoff, s=1, height=2, d=30) {
 	    }
 	}
 
-      translate([s*joystick_position[0], joystick_position[1], joystick_position[2]])
+	translate([s*xoff*3, -yoff*0.5, 0])
 	{
 	  cylinder(h=height, d=d, $fn=6);
 
 	  translate([s*xoff, -yoff*0.5, 0])
 	    cylinder(h=height, d=d, $fn=6);
+
 	}
     }
 }
