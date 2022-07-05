@@ -1,14 +1,14 @@
 [package]
-name = "esp32-firmware"
+name = "firmware-esp32c3"
 version = "0.1.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
+
 [dependencies]
-esp32c3-hal = {git = "https://github.com/esp-rs/esp-hal.git"}
+esp32c3-hal = { git = "https://github.com/esp-rs/esp-hal.git" }
 embedded-hal = { version = "0.2", features = ["unproven"] }
 nb           = "1.0"
 riscv-rt     = "0.8"
 panic-halt = "*"
-
