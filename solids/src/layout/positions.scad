@@ -31,5 +31,5 @@ function switch_positions_main(xoff, yoff, s) = [
 
 joystick_position_right = [ -3.6*xoff, -0.65*yoff, 0.5 ];
 
-function switch_positions(xoff, yoff, s) = concat(switch_positions_main(xoff, yoff, s), switch_positions_thumb(xoff,yoff, s));
+function switch_positions(xoff=xoff, yoff=xoff, s=s) = concat(switch_positions_main(xoff, yoff, s), switch_positions_thumb(xoff,yoff, s));
 
