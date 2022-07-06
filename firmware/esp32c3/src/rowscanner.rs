@@ -15,35 +15,47 @@
  <https://www.gnu.org/licenses/>.
 */
 
+use combwriter_protocol::{
+    ScanCode, KeyState, KeyPosition, Part
+};
+
 macro_rules! scan_row {
     (
-        $y:expr, $values:expr,
-        $c0:ident, $c1:ident, $c2:ident, $c3:ident, $c4:ident, $c5:ident, $c6:ident,
-        $count:ident, $state:ident, $serial:ident
+        $part:expr, $y:expr,
+        $count:ident, $state:ident,
+        $r:ident, $c0:ident, $c1:ident, $c2:ident, $c3:ident, $c4:ident, $c5:ident, $c6:ident,
+        $serial:ident, $timer:ident
     ) => {
-        scan_key!($values[0], $c0, $count[7*$y+0], $state[7*$y+0], $serial);
-        scan_key!($values[1], $c1, $count[7*$y+1], $state[7*$y+1], $serial);
-        scan_key!($values[2], $c2, $count[7*$y+2], $state[7*$y+2], $serial);
-        scan_key!($values[3], $c3, $count[7*$y+3], $state[7*$y+3], $serial);
-        scan_key!($values[4], $c4, $count[7*$y+4], $state[7*$y+4], $serial);
-        scan_key!($values[5], $c5, $count[7*$y+5], $state[7*$y+5], $serial);
-        scan_key!($values[6], $c6, $count[7*$y+6], $state[7*$y+6], $serial);
+
+        $r.set_high().unwrap();
+        block!($timer.wait()).unwrap();
+
+        scan_key!($c0, 0, $y, $part, $count, $state, $serial);
+        scan_key!($c1, 1, $y, $part, $count, $state, $serial);
+        scan_key!($c2, 2, $y, $part, $count, $state, $serial);
+        scan_key!($c3, 3, $y, $part, $count, $state, $serial);
+        scan_key!($c4, 4, $y, $part, $count, $state, $serial);
+        scan_key!($c5, 5, $y, $part, $count, $state, $serial);
+        scan_key!($c6, 6, $y, $part, $count, $state, $serial);
+
+        $r.set_low().unwrap();
+        block!($timer.wait()).unwrap();
     }
 }
 
 macro_rules! rowscanner {
-    ($io:ident, $timer0: ident, $serial0: ident) =>
+    ($io:ident, $timer0: ident, $serial0: ident, $part: expr) =>
     {
         let mut count = [0; 4*7];
         let mut state = [false; 4*7];
 
-        let col1 = $io.pins.gpio4.into_floating_input();
-        let col2 = $io.pins.gpio5.into_floating_input();
-        let col3 = $io.pins.gpio3.into_floating_input();
-        let col4 = $io.pins.gpio7.into_floating_input();
-        let col5 = $io.pins.gpio2.into_floating_input();
-        let col6 = $io.pins.gpio0.into_floating_input();
-        let col7 = $io.pins.gpio1.into_floating_input();
+        let col0 = $io.pins.gpio4.into_floating_input();
+        let col1 = $io.pins.gpio5.into_floating_input();
+        let col2 = $io.pins.gpio7.into_floating_input();
+        let col3 = $io.pins.gpio2.into_floating_input();
+        let col4 = $io.pins.gpio3.into_floating_input();
+        let col5 = $io.pins.gpio0.into_floating_input();
+        let col6 = $io.pins.gpio1.into_floating_input();
 
         let mut row0 = $io.pins.gpio10.into_push_pull_output();
         let mut row1 = $io.pins.gpio6.into_push_pull_output();
@@ -53,29 +65,30 @@ macro_rules! rowscanner {
         block!($timer0.wait()).unwrap();
 
         loop {
-            row0.set_high().unwrap();
-            block!($timer0.wait()).unwrap();
-            scan_row!(0, &["i2", "k", "h", "g", "f", "ß", "mod3"], col1, col2, col3, col4, col5, col6, col7, count, state, $serial0);
-            row0.set_low().unwrap();
-            block!($timer0.wait()).unwrap();
-
-            row1.set_high().unwrap();
-            block!($timer0.wait()).unwrap();
-            scan_row!(1, &["i1", "s", "n", "r", "t", "d", "mod2"], col1, col2, col3, col4, col5, col6, col7, count, state, $serial0);
-            row1.set_low().unwrap();
-            block!($timer0.wait()).unwrap();
-
-            row2.set_high().unwrap();
-            block!($timer0.wait()).unwrap();
-            scan_row!(2, &["t8", "q", "m", "b", "y", "j", "mod1"], col1, col2, col3, col4, col5, col6, col7, count, state, $serial0);
-            row2.set_low().unwrap();
-            block!($timer0.wait()).unwrap();
-
-            row3.set_high().unwrap();
-            block!($timer0.wait()).unwrap();
-            scan_row!(3, &["t1", "t2", "t3", "t4", "t5", "t6", "t7"], col1, col2, col3, col4, col5, col6, col7, count, state, $serial0);
-            row3.set_low().unwrap();
-            block!($timer0.wait()).unwrap();
+            scan_row!(
+                $part, 0,
+                count, state,
+                row0, col0, col1, col2, col3, col4, col5, col6,
+                $serial0, $timer0
+            );
+            scan_row!(
+                $part, 1,
+                count, state,
+                row1, col0, col1, col2, col3, col4, col5, col6,
+                $serial0, $timer0
+            );
+            scan_row!(
+                $part, 2,
+                count, state,
+                row2, col0, col1, col2, col3, col4, col5, col6,
+                $serial0, $timer0
+            );
+            scan_row!(
+                $part, 3,
+                count, state,
+                row3, col0, col1, col2, col3, col4, col5, col6,
+                $serial0, $timer0
+            );
         }
     }
 }

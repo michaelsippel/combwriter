@@ -15,25 +15,29 @@
  <https://www.gnu.org/licenses/>.
 */
 
-macro_rules! scan_key {
-    ( $c:expr, $in:ident, $count:expr, $state:expr, $serial:ident ) => {
-        if let Ok(inp) = $in.is_high() {
-            if $state != inp {
-                if $count == 0 {
-                    // was stable long enough, take the change
-                    $state = inp;
+use combwriter_protocol::{ScanCode, KeyPosition, KeyState};
 
-                    if $state {
-                        writeln!($serial, "press {}", $c).unwrap();
-                    } else {
-                        writeln!($serial, "release {}", $c).unwrap();
-                    }
+macro_rules! scan_key {
+    ( $in:ident, $x:expr, $y:expr, $part:expr, $count:expr, $state:expr, $serial:ident ) => {
+        if let Ok(inp) = $in.is_high() {
+            let idx = $y * 7 + $x;
+            if $state[idx] != inp {
+                if $count[idx] == 0 {
+                    // was stable long enough, take the change
+                    $state[idx] = inp;
+
+                    let scan_code = ScanCode {
+                        pos: KeyPosition::from_scan($x, $y, $part),
+                        state: KeyState::from_bool(inp)
+                    };
+
+                    $serial.write(scan_code.encode_u8()).unwrap();
                 }
 
                 // reset timer
-                $count = 10;
-            } else if $count > 0 {
-                $count -= 1;
+                $count[idx] = 20;
+            } else if $count[idx] > 0 {
+                $count[idx] -= 1;
             }
         }
     }

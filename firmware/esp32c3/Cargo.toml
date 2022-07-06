@@ -8,6 +8,7 @@ edition = "2021"
 
 [dependencies]
 esp32c3-hal = { git = "https://github.com/esp-rs/esp-hal.git" }
+combwriter-protocol = { path = "../../protocol/" }
 embedded-hal = { version = "0.2", features = ["unproven"] }
 nb           = "1.0"
 riscv-rt     = "0.8"

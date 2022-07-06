@@ -29,6 +29,11 @@ mod rowscanner;
 #[allow(unused_macros)]
 mod colscanner;
 
+use combwriter_protocol::{
+    ScanCode, KeyState, KeyPosition, Part
+};
+
+
 use core::fmt::Write;
 
 use esp32c3_hal::{pac::Peripherals, prelude::*, RtcCntl, Serial, Timer, IO, clock::ClockControl};
@@ -53,9 +58,9 @@ fn main() -> ! {
     timer0.disable();
     timer1.disable();
 
-    timer0.start(100u64.micros());
+    timer0.start(50u64.micros());
     
     let io = IO::new(peripherals.GPIO, peripherals.IO_MUX);
-    rowscanner!(io, timer0, serial0);
+    rowscanner!(io, timer0, serial0, combwriter_protocol::Part::Right);
 }
 
