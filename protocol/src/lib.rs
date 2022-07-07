@@ -1,14 +1,16 @@
 #![no_std]
 
+pub mod map;
+
 #[repr(u8)]
-#[derive(Clone, Copy, PartialEq)]
+#[derive(Clone, Copy, PartialEq, Debug)]
 pub enum KeyState {
     Released = 0,
     Pressed = 1,
 }
 
 #[repr(u8)]
-#[derive(Clone, Copy, PartialEq)]
+#[derive(Clone, Copy, PartialEq, Debug)]
 pub enum Column {
     Index2 = 0,
     Index1 = 1,
@@ -20,7 +22,7 @@ pub enum Column {
 }
 
 #[repr(u8)]
-#[derive(Clone, Copy, PartialEq)]
+#[derive(Clone, Copy, PartialEq, Debug)]
 pub enum Row {
     Top = 0,
     Mid = 1,
@@ -29,13 +31,13 @@ pub enum Row {
 }
 
 #[repr(u8)]
-#[derive(Clone, Copy, PartialEq)]
+#[derive(Clone, Copy, PartialEq, Debug)]
 pub enum Part {
     Left = 0,
     Right = 1
 }
 
-#[derive(Clone, Copy, PartialEq)]
+#[derive(Clone, Copy, PartialEq, Debug)]
 pub struct KeyPosition {
     pub col: Column,
     pub row: Row,
@@ -121,6 +123,7 @@ impl KeyPosition {
     }
 }
 
+#[derive(Debug)]
 pub struct ScanCode {
     pub pos: KeyPosition,
     pub state: KeyState
