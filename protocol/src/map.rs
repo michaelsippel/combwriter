@@ -39,7 +39,7 @@ pub enum Command {
     Up, Dn, Prev, Next, Begin, End,
     DeletePrev, DeleteNext,
     PageUp, PageDn,
-    Tab,
+    Tab, Esc,
     Char(char)
 }
 
@@ -90,7 +90,7 @@ static NEO_CMDS: [[[Option<Command>; 5]; 3]; 2] = [
     [
         [Some(Command::PageDn), Some(Command::DeleteNext), Some(Command::Up), Some(Command::DeletePrev), Some(Command::PageUp)],
         [Some(Command::End),  Some(Command::Next),       Some(Command::Dn), Some(Command::Prev),       Some(Command::Begin)],
-        [None,            Some(Command::Tab),                None,        Some(Command::Tab),                None]
+        [None,            Some(Command::Tab),                None,        Some(Command::Esc),                None]
     ],
     [
         [None, Some(Command::Char('7')), Some(Command::Char('8')), Some(Command::Char('9')), None],
