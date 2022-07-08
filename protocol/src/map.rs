@@ -116,7 +116,7 @@ pub fn get_neo_value(
             1 => {
                 match pos.part {
                     Part::Left => KeyValue::Command(Command::Char(' ')),
-                    Part::Right => KeyValue::Command(Command::Char('\n')),
+                    Part::Right => KeyValue::Command(Command::Char(if layer_select[2] { '0' } else { '\n' })),
                 }
             }
             2 => KeyValue::Prefix(Prefix::Alt),
@@ -138,7 +138,7 @@ pub fn get_neo_value(
             (Row::Mid, Part::Right) => KeyValue::Command(Command::Char('"')),
             _ => KeyValue::Command(Command::Char('*')),
         }
-    } else {   
+    } else {
         match layer_select {
             [true, false, false] => KeyValue::Command(Command::Char(*map_get(&NEO_CHARS2, pos))),
             [false, true, false] => KeyValue::Command(Command::Char(*map_get(&NEO_CHARS3, pos))),
