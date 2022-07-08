@@ -29,7 +29,8 @@ use combwriter_protocol::{
 // start a ydotool if the command is not a character
 fn ydotool_do_cmd(
     cmd: Command,
-    prefixes: [bool; 3]
+    prefixes: [bool; 3],
+    shift: bool
 ) {
     match (cmd, prefixes) {
         (Command::Char(c), [false, false, false]) => {
@@ -39,7 +40,8 @@ fn ydotool_do_cmd(
         (cmd, prefixes) => {
             std::process::Command::new("ydotool").arg("key").arg(
             format!(
-                "{}{}{}{}",
+                "{}{}{}{}{}",
+                if shift { "shift+" } else {""},
                 if prefixes[Prefix::Ctrl as usize] { "ctrl+" } else {""},
                 if prefixes[Prefix::Super as usize] { "super+" } else {""},
                 if prefixes[Prefix::Alt as usize] { "alt+" } else {""},
@@ -98,7 +100,16 @@ fn main() {
                     file.read_exact(&mut bytes);
 
                     let mut sc = ScanCode::from_u8(bytes[0]);
-                    let value = combwriter_protocol::map::get_neo_value(sc.pos, *layer_select.read().unwrap());
+
+                    let ps = *prefix_select.read().unwrap();
+                    let ls = *layer_select.read().unwrap();
+
+                    let value =
+                        if ps[0] {
+                            combwriter_protocol::map::get_neo_value(sc.pos, [false, ls[1], ls[2]])
+                        } else { 
+                            combwriter_protocol::map::get_neo_value(sc.pos, *layer_select.read().unwrap())
+                        };
 
                     match sc.state {
                         KeyState::Pressed => {
@@ -115,7 +126,6 @@ fn main() {
                                             layer_select.write().unwrap()[2] = true;
                                         }
                                         Modifier::Repeat => {
-                                            
                                         }
                                     }
                                 }
@@ -123,7 +133,7 @@ fn main() {
                                     prefix_select.write().unwrap()[p as usize] = true;
                                 }
                                 KeyValue::Command(cmd) => {
-                                    ydotool_do_cmd(cmd, *prefix_select.read().unwrap());
+                                    ydotool_do_cmd(cmd, ps, ls[0]);
                                 }
                             }
                         }
@@ -152,13 +162,13 @@ fn main() {
                                 KeyValue::Command(cmd) => {
                                     
                                 }
-                            }
+                            }                    
                         }
-                        
                     }
                 }
             }
-            });
+        }
+        );
     }
 
     loop{}
