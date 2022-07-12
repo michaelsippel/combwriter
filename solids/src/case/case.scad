@@ -15,28 +15,37 @@
  <https://www.gnu.org/licenses/>.
 */
 
+angle=[
+       5, 7
+];
+
 include <../layout/positions.scad>
 include <../layout/layout.scad>
 include <../stencils/joystick.scad>
-angle = [7, 13];
 
 module esp32c3_board() {
-  translate([0,0,10])
-    cube([30, 45, 10+15.5*2], center=true);
+  translate([-16,-24,0])
+    difference()
+    {
+      cube([32, 48, 10+15.5*2]);
+
+      translate([0, 0, 0])
+      cube([32, 5, 1.3]);
+    }
 }
 
 module usb_port_stencil() {
-  translate([0, 22.5, 0])
+  translate([0, 22.5, 17])
   hull()
     {
-      translate([0, 4, 0])
-      cube([10, 0.1, 7], center=true);
-
       translate([0, 0,0])
-      cube([9, 0.1, 6], center=true);
+	cube([11, 0.1, 7], center=true);
+
+      translate([0, 4, 0])
+      cube([12, 0.1, 8], center=true);
 
       translate([0,20,0])
-      cube([10, 0.1, 7], center=true);
+      cube([12, 0.1, 8], center=true);
     }
 }
 
@@ -110,7 +119,7 @@ module comm_jack()
 	}
 
       // real plate
-      translate([-s*10,-4,60])
+      translate([-s*5, -4, 53])
 	rotate([angle[0], -s*angle[1], 0])
 	union()
 	{
@@ -136,40 +145,32 @@ module comm_jack()
 	  {
 
 	    // cables
-	    translate([-50, 0, 3])
-	      cube([150, 10,50]);
+	    translate([-25.5, 0, 1])
+	      cube([130, 10,50]);
 
-	    translate([-12, 30, 3])
+	    translate([-12, 30, 1])
 	      rotate([0,0,60])
 	      translate([-30,0,7])
-	      cube([80, 16,50]);
- 
+	      cube([90, 20,50]);
+
 	    // board
-	    translate([-2.3*xoff, 1.3*yoff, 15.5+3])
+	    translate([-2.3*xoff, 1.2*yoff, 1])
 	      union()
 	      {
 
 		color([0,1,0])
 		  esp32c3_board();
-		
+
 		color([0,1,1])
 		  usb_port_stencil();
 
 		rotate([0,0,-30])
-		  translate([-22, 0,15])
+		  translate([-24, 0,19])
 		  color([1,1,0])
 		  comm_jack();
 
 	      }
 	  }
       }
-
     }
 
-mirror([(s+1)/2,0,0])
-{
-translate([2.3*xoff, 1.3*yoff, 15.5+3])
-color([1,0,1])
-translate([-100,-25,-5-10.5])
-cube([35, 10, 5+1.5]);
-}
