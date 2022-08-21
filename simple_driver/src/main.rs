@@ -58,7 +58,7 @@ fn ydotool_do_cmd(
                     Command::Tab => "tab".into(),
                     Command::Esc => "esc".into(),
                     Command::PageUp => "PageUp".into(),
-                    Command::PageDn => "PageDn".into(),
+                    Command::PageDn => "PageDown".into(),
                 }
             )).output().unwrap();
         }
@@ -81,10 +81,7 @@ fn main() {
         std::process::Command::new("stty").arg("-F").arg(device_path.clone()).arg("raw")
             .output()
             .expect("Failed to set UART raw mode");
-        std::process::Command::new("stty").arg("-F").arg(device_path.clone()).arg("-echo")
-            .output()
-            .expect("Failed to disable UART echo");
-        std::process::Command::new("stty").arg("-F").arg(device_path.clone()).arg("-ispeed").arg("115200")
+        std::process::Command::new("stty").arg("-F").arg(device_path.clone()).arg("speed").arg("115200")
             .output()
             .expect("Failed to set baud UART rate");
 
