@@ -14,9 +14,9 @@
  You should have received a copy of the GNU General Public License along with this program. If not, see
  <https://www.gnu.org/licenses/>.
 */
-
+//s=1;
 angle=[
-       5, 7
+       0,0
 ];
 
 include <../layout/positions.scad>
@@ -25,12 +25,28 @@ include <../stencils/joystick.scad>
 
 module esp32c3_board() {
   translate([-16,-24,0])
+    {
     difference()
     {
-      cube([32, 48, 10+15.5*2]);
+      cube([32, 48, 22]);
 
       translate([0, 0, 0])
-      cube([32, 5, 1.3]);
+      cube([32, 8, 1.3]);
+
+      translate([0, 0, 1.3+2])
+      cube([2, 20, 5]);
+
+      translate([6, 0, 1.3+2])
+      cube([2, 13, 5]);
+      /*
+      translate([25-1.3, 0, 1.3+2])
+	cube([2, 13, 5]);
+      */
+    }
+
+    translate([27, 2.5, -10])
+    color([1,0,0])
+      cylinder(h=50, d=1.5, $fn=64, center=true);
     }
 }
 
@@ -70,7 +86,7 @@ module comm_jack()
   cylinder(d=10, h=2.5, $fn=64);
 }
 
-  difference()
+difference()
     {
       // hull
 
@@ -82,7 +98,29 @@ module comm_jack()
       translate([-s*hw,0,0])
 	union()
 	{
-	  for( pos = switch_positions() )
+
+	    translate([(5+4)*s*xoff, 0.5*yoff, 0])
+	    {
+	      difference()
+	      {
+		cylinder(h=height+32, d=25, $fn=6);
+
+		mirror([s,0,0])
+		color([1,0,0])
+		translate([31,-24,20])
+		rotate([-10,-30,30])
+		  cube([50, 50, 80], center=true);
+	      }
+	    }
+
+	  for( pos = concat([
+		      for(x = [-3:4])
+			for(y = [-1:1])
+			    [[x,y], [s*xoff * x - s*scale_map_x[x+3], yoff*(2+y - 0.5*abs(x)), 0]]
+			     ],
+			    switch_positions_thumb(xoff,yoff,s)
+			    )
+	       )
 	    hull()
 	      {
 		for(x = [0:12])
@@ -119,12 +157,12 @@ module comm_jack()
 	}
 
       // real plate
-      translate([-s*5, -4, 53])
+      translate([-s*2, -2, 44])
 	rotate([angle[0], -s*angle[1], 0])
 	union()
 	{
 	  color([1,1,1])
-	    plate(xoff, yoff, s, 40, 37);
+	    plate(xoff, yoff, s, 40, 39);
 
 	  translate([0,0,-33])
 	    if(s == 1)
@@ -144,31 +182,43 @@ module comm_jack()
 	mirror([m,0,0])
 	  {
 
+	    //<<
 	    // cables
+	    //>>
+
 	    translate([-25.5, 0, 1])
 	      cube([130, 10,50]);
 
-	    translate([-12, 30, 1])
+	    translate([-12, 30])
 	      rotate([0,0,60])
-	      translate([-30,0,7])
+	      translate([-30,0,1])
 	      cube([90, 20,50]);
 
+	    translate([-92,30, 1])
+	      rotate([0,0,-30])
+	    cube([80, 20,50]);
+
+	    
+	    //<<
 	    // board
-	    translate([-2.3*xoff, 1.2*yoff, 1])
+	    //>>
+
+	    translate([-4.2*xoff, 1.2*yoff, 18])
+	      rotate([0,-90,0])
 	      union()
 	      {
-
 		color([0,1,0])
 		  esp32c3_board();
 
-		color([0,1,1])
+		  color([0,1,1])
 		  usb_port_stencil();
 
+		  /*
 		rotate([0,0,-30])
 		  translate([-24, 0,19])
 		  color([1,1,0])
 		  comm_jack();
-
+		*/
 	      }
 	  }
       }
