@@ -104,6 +104,7 @@ fn get_uinput_code(val: KeyValue) -> Vec<keyboard::Key> {
                         ',' => vec![ keyboard::Key::Comma ],
                         '.' => vec![ keyboard::Key::Dot ],
                         ';' => vec![ keyboard::Key::SemiColon ],
+                        '\'' => vec![ keyboard::Key::Apostrophe ],
                         '{' => vec![ keyboard::Key::LeftShift, keyboard::Key::LeftBrace ],
                         '}' => vec![ keyboard::Key::LeftShift, keyboard::Key::RightBrace ],
                         '|' => vec![ keyboard::Key::LeftShift, keyboard::Key::BackSlash ],
@@ -115,6 +116,7 @@ fn get_uinput_code(val: KeyValue) -> Vec<keyboard::Key> {
                         '%' => vec![ keyboard::Key::LeftShift, keyboard::Key::_5 ],
                         '^' => vec![ keyboard::Key::LeftShift, keyboard::Key::_6 ],
                         '&' => vec![ keyboard::Key::LeftShift, keyboard::Key::_7 ],
+                        '*' => vec![ keyboard::Key::LeftShift, keyboard::Key::_8 ],
                         '(' => vec![ keyboard::Key::LeftShift, keyboard::Key::_9 ],
                         ')' => vec![ keyboard::Key::LeftShift, keyboard::Key::_0 ],
                         '?' => vec![ keyboard::Key::LeftShift, keyboard::Key::Slash ],
@@ -123,6 +125,7 @@ fn get_uinput_code(val: KeyValue) -> Vec<keyboard::Key> {
                         '<' => vec![ keyboard::Key::LeftShift, keyboard::Key::Comma ],
                         '>' => vec![ keyboard::Key::LeftShift, keyboard::Key::Dot ],
                         ':' => vec![ keyboard::Key::LeftShift, keyboard::Key::SemiColon ],
+                        '"' => vec![ keyboard::Key::LeftShift, keyboard::Key::Apostrophe ],
                         _ => vec![],
                     }
                 }
