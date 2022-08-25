@@ -156,6 +156,7 @@ fn main() {
 
     let layer_select = Arc::new(RwLock::new([false; 3]));
     let prefix_select = Arc::new(RwLock::new([false; 3]));
+    let complex_keys = Arc::new(RwLock::new(Vec::new()));
     
     let mut join_handles = Vec::new();
 
@@ -180,12 +181,11 @@ fn main() {
         join_handles.push(std::thread::spawn({
             let layer_select = layer_select.clone();
             let prefix_select = prefix_select.clone();
-
             let device = device.clone();
+            let complex_keys = complex_keys.clone();
+
             move || {
                 loop {
-                    //std::thread::sleep(std::time::Duration::from_millis(1));
-
                     let mut bytes = [0 as u8; 1];
                     file.read_exact(&mut bytes);
 
@@ -193,7 +193,7 @@ fn main() {
 
                     let ps = *prefix_select.read().unwrap();
                     let ls = *layer_select.read().unwrap();
-
+               
                     let value =
                         if ps[0] {
                             combwriter_protocol::map::get_neo_value(sc.pos, [false, ls[1], ls[2]])
@@ -201,13 +201,16 @@ fn main() {
                             combwriter_protocol::map::get_neo_value(sc.pos, *layer_select.read().unwrap())
                         };
 
+                    let mut dev = device.write().unwrap();
+                    let mut ck = complex_keys.write().unwrap();
+
                     match sc.state {
                         KeyState::Pressed => {
                             match value {
                                 KeyValue::Modifier(m) => {
                                     match m {
                                         Modifier::Select1 => {
-                                            device.write().unwrap().press(&keyboard::Key::LeftShift);
+                                            dev.press(&keyboard::Key::LeftShift);
                                         }
                                         Modifier::Select2 => {
                                             layer_select.write().unwrap()[1] = true;
@@ -218,30 +221,25 @@ fn main() {
                                         Modifier::Repeat => {}
                                     }
                                 },
+                                KeyValue::Prefix(p) => {
+                                    for v in get_uinput_code(value) {
+                                        dev.press(&v);
+                                    }
+                                },
                                 _ => {
-                                    let keys = get_uinput_code(value);
-                                    if keys.len() > 1 {
-                                        for v in keys.iter() {
-                                            device.write().unwrap().press(v);
-                                        }
-                                        for v in keys.iter() {
-                                            device.write().unwrap().release(v);
-                                        }
-                                    } else {
-                                        for v in keys.iter() {
-                                            device.write().unwrap().press(v);
-                                        }                                        
+                                    for v in get_uinput_code(value) {
+                                        ck.push(v);
+                                        dev.press(&v);
                                     }
                                 }
                             }
-                        }
-
+                        },
                         KeyState::Released => {
                             match value {
                                 KeyValue::Modifier(m) => {
                                     match m {
                                         Modifier::Select1 => {
-                                            device.write().unwrap().release(&keyboard::Key::LeftShift);
+                                            dev.release(&keyboard::Key::LeftShift);
                                         }
                                         Modifier::Select2 => {
                                             layer_select.write().unwrap()[1] = false;
@@ -251,17 +249,22 @@ fn main() {
                                         }
                                         Modifier::Repeat => {}
                                     }
-                                },
-                                _ => {
+                                }
+                                KeyValue::Prefix(p) => {
                                     for v in get_uinput_code(value) {
-                                        device.write().unwrap().release(&v);
+                                        dev.release(&v);
+                                    }
+                                }
+                                _ => {
+                                    while let Some(v) = ck.pop() {
+                                        dev.release(&v);
                                     }
                                 }
                             }
                         }
                     }
 
-                    device.write().unwrap().synchronize();
+                    dev.synchronize();
                 }
             }
         }
