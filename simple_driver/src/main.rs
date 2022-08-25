@@ -21,50 +21,132 @@ use std::io::prelude::*;
 use std::io::Write;
 use std::env;
 
+use uinput::event::keyboard;
+
 use combwriter_protocol::{
     ScanCode, KeyState, KeyPosition, Part, Column, Row,
     map::{KeyValue, Command, Modifier, Prefix}
 };
 
-// start a ydotool if the command is not a character
-fn ydotool_do_cmd(
-    cmd: Command,
-    prefixes: [bool; 3],
-    shift: bool
-) {
-    match (cmd, prefixes) {
-        (Command::Char(c), [false, false, false]) => {
-            print!("{}", c);
-            std::io::stdout().flush().unwrap();
-        },
-        (cmd, prefixes) => {
-            std::process::Command::new("ydotool").arg("key").arg(
-            format!(
-                "{}{}{}{}{}",
-                if shift { "shift+" } else {""},
-                if prefixes[Prefix::Ctrl as usize] { "ctrl+" } else {""},
-                if prefixes[Prefix::Super as usize] { "super+" } else {""},
-                if prefixes[Prefix::Alt as usize] { "alt+" } else {""},
-                match cmd {
-                    Command::Char(c) => c.to_string(),
-                    Command::Up => String::from("up"),
-                    Command::Dn => "down".into(),
-                    Command::Prev => "left".into(),
-                    Command::Next => "right".into(),
-                    Command::DeletePrev => "backspace".into(),
-                    Command::DeleteNext => "delete".into(),
-                    Command::Begin => "home".into(),
-                    Command::End => "end".into(),
-                    Command::Tab => "tab".into(),
-                    Command::Esc => "esc".into(),
-                    Command::PageUp => "PageUp".into(),
-                    Command::PageDn => "PageDown".into(),
+fn get_uinput_code(val: KeyValue) -> Vec<keyboard::Key> {
+    match val {
+        KeyValue::Modifier(Modifier::Select1) => vec![ keyboard::Key::LeftShift ],
+        KeyValue::Modifier(Modifier::Select2) => vec![ keyboard::Key::CapsLock ],
+        KeyValue::Modifier(Modifier::Select3) => vec![ keyboard::Key::Tab ],
+        KeyValue::Prefix(Prefix::Ctrl) => vec![ keyboard::Key::LeftControl ],
+        KeyValue::Prefix(Prefix::Super) => vec![],
+        KeyValue::Prefix(Prefix::Alt) => vec![ keyboard::Key::LeftAlt ],
+        KeyValue::Command(cmd) => {
+            match cmd {
+                Command::Up => vec![ keyboard::Key::Up ],
+                Command::Dn => vec![ keyboard::Key::Down ],
+                Command::Prev => vec![ keyboard::Key::Left ],
+                Command::Next => vec![ keyboard::Key::Right ],
+                Command::Begin => vec![ keyboard::Key::Home ],
+                Command::End => vec![ keyboard::Key::End ],
+                Command::DeletePrev => vec![ keyboard::Key::BackSpace ],
+                Command::DeleteNext => vec![ keyboard::Key::Delete ],
+                Command::PageUp => vec![ keyboard::Key::PageUp ],
+                Command::PageDn => vec![ keyboard::Key::PageDown ],
+                Command::Tab => vec![ keyboard::Key::Tab ],
+                Command::Esc => vec![ keyboard::Key::Esc ],
+                Command::Char(c) => {
+                    match c {
+                        ' ' => vec![ keyboard::Key::Space ],
+                        '\n' => vec![ keyboard::Key::Enter ],
+                        'x' => vec![ keyboard::Key::X ],
+                        'v' => vec![ keyboard::Key::V ],
+                        'l' => vec![ keyboard::Key::L ],
+                        'c' => vec![ keyboard::Key::C ],
+                        'w' => vec![ keyboard::Key::W ],
+                        'k' => vec![ keyboard::Key::K ],
+                        'h' => vec![ keyboard::Key::H ],
+                        'g' => vec![ keyboard::Key::G ],
+                        'f' => vec![ keyboard::Key::F ],
+                        'q' => vec![ keyboard::Key::Q ],
+                        'u' => vec![ keyboard::Key::U ],
+                        'i' => vec![ keyboard::Key::I ],
+                        'a' => vec![ keyboard::Key::A ],
+                        'e' => vec![ keyboard::Key::E ],
+                        'o' => vec![ keyboard::Key::O ],
+                        's' => vec![ keyboard::Key::S ],
+                        'n' => vec![ keyboard::Key::N ],
+                        'r' => vec![ keyboard::Key::R ],
+                        't' => vec![ keyboard::Key::T ],
+                        'd' => vec![ keyboard::Key::D ],
+                        'ü' => vec![ keyboard::Key::U ],
+                        'ö' => vec![ keyboard::Key::O ],
+                        'ä' => vec![ keyboard::Key::A ],
+                        'p' => vec![ keyboard::Key::P ],
+                        'z' => vec![ keyboard::Key::Z ],
+                        'ß' => vec![ keyboard::Key::S ],
+                        'm' => vec![ keyboard::Key::M ],
+                        'b' => vec![ keyboard::Key::B ],
+                        'y' => vec![ keyboard::Key::Y ],
+                        'j' => vec![ keyboard::Key::J ],
+                        '0' => vec![ keyboard::Key::_0 ],
+                        '1' => vec![ keyboard::Key::_1 ],
+                        '2' => vec![ keyboard::Key::_2 ],
+                        '3' => vec![ keyboard::Key::_3 ],
+                        '4' => vec![ keyboard::Key::_4 ],
+                        '5' => vec![ keyboard::Key::_5 ],
+                        '6' => vec![ keyboard::Key::_6 ],
+                        '7' => vec![ keyboard::Key::_7 ],
+                        '8' => vec![ keyboard::Key::_8 ],
+                        '9' => vec![ keyboard::Key::_9 ],
+                        '[' => vec![ keyboard::Key::LeftBrace ],
+                        ']' => vec![ keyboard::Key::RightBrace ],
+                        '/' => vec![ keyboard::Key::Slash ],
+                        '\\' => vec![ keyboard::Key::BackSlash ],
+                        '`' => vec![ keyboard::Key::Grave ],
+                        '-' => vec![ keyboard::Key::Minus ],
+                        '=' => vec![ keyboard::Key::Equal ],
+                        ',' => vec![ keyboard::Key::Comma ],
+                        '.' => vec![ keyboard::Key::Dot ],
+                        ';' => vec![ keyboard::Key::SemiColon ],
+                        '{' => vec![ keyboard::Key::LeftShift, keyboard::Key::LeftBrace ],
+                        '}' => vec![ keyboard::Key::LeftShift, keyboard::Key::RightBrace ],
+                        '|' => vec![ keyboard::Key::LeftShift, keyboard::Key::BackSlash ],
+                        '~' => vec![ keyboard::Key::LeftShift, keyboard::Key::Grave ],
+                        '!' => vec![ keyboard::Key::LeftShift, keyboard::Key::_1 ],
+                        '@' => vec![ keyboard::Key::LeftShift, keyboard::Key::_2 ],
+                        '#' => vec![ keyboard::Key::LeftShift, keyboard::Key::_3 ],
+                        '$' => vec![ keyboard::Key::LeftShift, keyboard::Key::_4 ],
+                        '%' => vec![ keyboard::Key::LeftShift, keyboard::Key::_5 ],
+                        '^' => vec![ keyboard::Key::LeftShift, keyboard::Key::_6 ],
+                        '&' => vec![ keyboard::Key::LeftShift, keyboard::Key::_7 ],
+                        '(' => vec![ keyboard::Key::LeftShift, keyboard::Key::_9 ],
+                        ')' => vec![ keyboard::Key::LeftShift, keyboard::Key::_0 ],
+                        '?' => vec![ keyboard::Key::LeftShift, keyboard::Key::Slash ],
+                        '_' => vec![ keyboard::Key::LeftShift, keyboard::Key::Minus ],
+                        '+' => vec![ keyboard::Key::LeftShift, keyboard::Key::Equal ],
+                        '<' => vec![ keyboard::Key::LeftShift, keyboard::Key::Comma ],
+                        '>' => vec![ keyboard::Key::LeftShift, keyboard::Key::Dot ],
+                        ':' => vec![ keyboard::Key::LeftShift, keyboard::Key::SemiColon ],
+                        _ => vec![],
+                    }
                 }
-            )).output().unwrap();
+                _ => vec![]
+            }
         }
+        _ => vec![]
     }
 }
 
+/*
+static NEO_CODES1: [[[keyboard::Key; 5]; 3];  2] = [
+        [
+            [keyboard::Key::W, keyboard::Key::C, keyboard::Key::L, keyboard::Key::V, keyboard::Key::X],
+            [keyboard::Key::O, keyboard::Key::E, keyboard::Key::A, keyboard::Key::I, keyboard::Key::U],
+            [keyboard::Key::Z, keyboard::Key::P, keyboard::Key::A, keyboard::Key::A, keyboard::Key::A],
+        ],
+        [
+            [keyboard::Key::K, keyboard::Key::H, keyboard::Key::G, keyboard::Key::F, keyboard::Key::Q],
+            [keyboard::Key::S, keyboard::Key::N, keyboard::Key::R, keyboard::Key::T, keyboard::Key::D],
+            [keyboard::Key::A, keyboard::Key::M, keyboard::Key::B, keyboard::Key::Y, keyboard::Key::J]
+        ]
+];
+*/
 fn main() {
     let args: Vec<String> = env::args().collect();
 
@@ -75,6 +157,14 @@ fn main() {
     let layer_select = Arc::new(RwLock::new([false; 3]));
     let prefix_select = Arc::new(RwLock::new([false; 3]));
     
+    let mut join_handles = Vec::new();
+
+    
+    let mut device = Arc::new(RwLock::new(uinput::default().unwrap()
+	.name("Combwriter").unwrap()
+	.event(uinput::event::Keyboard::All).unwrap()
+	.create().unwrap()));
+
     for i in 1 .. args.len() {
         let device_path = args[i].clone();
 
@@ -87,12 +177,15 @@ fn main() {
 
         let mut file = File::open(&device_path).expect("invalid path!");
 
-        std::thread::spawn({
+        join_handles.push(std::thread::spawn({
             let layer_select = layer_select.clone();
             let prefix_select = prefix_select.clone();
 
+            let device = device.clone();
             move || {
                 loop {
+                    //std::thread::sleep(std::time::Duration::from_millis(1));
+
                     let mut bytes = [0 as u8; 1];
                     file.read_exact(&mut bytes);
 
@@ -114,7 +207,7 @@ fn main() {
                                 KeyValue::Modifier(m) => {
                                     match m {
                                         Modifier::Select1 => {
-                                            layer_select.write().unwrap()[0] = true;
+                                            device.write().unwrap().press(&keyboard::Key::LeftShift);
                                         }
                                         Modifier::Select2 => {
                                             layer_select.write().unwrap()[1] = true;
@@ -122,15 +215,23 @@ fn main() {
                                         Modifier::Select3 => {
                                             layer_select.write().unwrap()[2] = true;
                                         }
-                                        Modifier::Repeat => {
-                                        }
+                                        Modifier::Repeat => {}
                                     }
-                                }
-                                KeyValue::Prefix(p) => {
-                                    prefix_select.write().unwrap()[p as usize] = true;
-                                }
-                                KeyValue::Command(cmd) => {
-                                    ydotool_do_cmd(cmd, ps, ls[0]);
+                                },
+                                _ => {
+                                    let keys = get_uinput_code(value);
+                                    if keys.len() > 1 {
+                                        for v in keys.iter() {
+                                            device.write().unwrap().press(v);
+                                        }
+                                        for v in keys.iter() {
+                                            device.write().unwrap().release(v);
+                                        }
+                                    } else {
+                                        for v in keys.iter() {
+                                            device.write().unwrap().press(v);
+                                        }                                        
+                                    }
                                 }
                             }
                         }
@@ -140,7 +241,7 @@ fn main() {
                                 KeyValue::Modifier(m) => {
                                     match m {
                                         Modifier::Select1 => {
-                                            layer_select.write().unwrap()[0] = false;
+                                            device.write().unwrap().release(&keyboard::Key::LeftShift);
                                         }
                                         Modifier::Select2 => {
                                             layer_select.write().unwrap()[1] = false;
@@ -148,27 +249,29 @@ fn main() {
                                         Modifier::Select3 => {
                                             layer_select.write().unwrap()[2] = false;
                                         }
-                                        Modifier::Repeat => {
-                                            
-                                        }
+                                        Modifier::Repeat => {}
+                                    }
+                                },
+                                _ => {
+                                    for v in get_uinput_code(value) {
+                                        device.write().unwrap().release(&v);
                                     }
                                 }
-                                KeyValue::Prefix(p) => {
-                                    prefix_select.write().unwrap()[p as usize] = false;
-                                }
-                                KeyValue::Command(cmd) => {
-                                    
-                                }
-                            }                    
+                            }
                         }
                     }
+
+                    device.write().unwrap().synchronize();
                 }
             }
         }
-        );
+        ));
     }
 
-    loop{}
+    for jh in join_handles {
+        jh.join();
+    }
+    
 }
 
 
