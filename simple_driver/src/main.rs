@@ -128,6 +128,23 @@ fn get_uinput_code(val: KeyValue) -> Vec<keyboard::Key> {
                         '"' => vec![ keyboard::Key::LeftShift, keyboard::Key::Apostrophe ],
                         _ => vec![],
                     }
+                },
+                Command::F(n) => {
+                    match n {
+                        1 => vec![ keyboard::Key::F1 ],
+                        2 => vec![ keyboard::Key::F2 ],
+                        3 => vec![ keyboard::Key::F3 ],
+                        4 => vec![ keyboard::Key::F4 ],
+                        5 => vec![ keyboard::Key::F5 ],
+                        6 => vec![ keyboard::Key::F6 ],
+                        7 => vec![ keyboard::Key::F7 ],
+                        8 => vec![ keyboard::Key::F8 ],
+                        9 => vec![ keyboard::Key::F9 ],
+                        10 => vec![ keyboard::Key::F10 ],
+                        11 => vec![ keyboard::Key::F11 ],
+                        12 => vec![ keyboard::Key::F12 ],                        
+                        _ => vec![]
+                    }
                 }
                 _ => vec![]
             }

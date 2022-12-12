@@ -40,7 +40,8 @@ pub enum Command {
     DeletePrev, DeleteNext,
     PageUp, PageDn,
     Tab, Esc,
-    Char(char)
+    Char(char),
+    F(u8)
 }
 
 #[derive(Clone, Copy, Debug)]
@@ -99,6 +100,19 @@ static NEO_CMDS: [[[Option<Command>; 5]; 3]; 2] = [
     ]
 ];
 
+static NEO_F: [[[Option<Command>; 5]; 3]; 2] = [
+    [
+        [Some(Command::PageDn), Some(Command::DeleteNext), Some(Command::Up), Some(Command::DeletePrev), Some(Command::PageUp)],
+        [Some(Command::End),  Some(Command::Next),       Some(Command::Dn), Some(Command::Prev),       Some(Command::Begin)],
+        [None,            Some(Command::Tab),                None,        Some(Command::Esc),                None]
+    ],
+    [
+        [None, Some(Command::F(7)), Some(Command::F(8)), Some(Command::F(9)), None],
+        [None, Some(Command::F(4)), Some(Command::F(5)), Some(Command::F(6)), None],
+        [None, Some(Command::F(1)), Some(Command::F(2)), Some(Command::F(3)), None]
+    ]
+];
+
 fn map_get<T>(
     map: &[[[T; 5]; 3]; 2],
     pos: KeyPosition,
@@ -116,7 +130,13 @@ pub fn get_neo_value(
             1 => {
                 match pos.part {
                     Part::Left => KeyValue::Command(Command::Char(' ')),
-                    Part::Right => KeyValue::Command(Command::Char(if layer_select[2] { '0' } else { '\n' })),
+                    Part::Right => KeyValue::Command(
+                        if layer_select[1] && layer_select[2] {
+                            Command::F(10)
+                        } else {
+                            Command::Char(if layer_select[2] { '0' } else { '\n' })
+                        }
+                    ),
                 }
             }
             2 => KeyValue::Prefix(Prefix::Alt),
@@ -143,6 +163,7 @@ pub fn get_neo_value(
             [true, false, false] => KeyValue::Command(Command::Char(*map_get(&NEO_CHARS2, pos))),
             [false, true, false] => KeyValue::Command(Command::Char(*map_get(&NEO_CHARS3, pos))),
             [false, false, true] => KeyValue::Command(map_get(&NEO_CMDS, pos).unwrap_or(Command::Char('?'))),
+            [false, true, true] => KeyValue::Command(map_get(&NEO_F, pos).unwrap_or(Command::Char('?'))),
             _ => KeyValue::Command(Command::Char(*map_get(&NEO_CHARS1, pos)))
         }
     }
